@@ -1,14 +1,32 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+mod commands;
+mod services;
+
+use tauri::Manager; // <--- CERTIFIQUE-SE QUE ESTE IMPORT ESTÁ AQUI
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .setup(|app| {
+            let handle = app.handle().clone();
+            
+            // 1. Inicia monitor de eventos
+            services::docker::spawn_event_monitor(handle);
+
+            // 2. FORÇA ABERTURA DO DEVTOOLS (Apenas em modo dev)
+            #[cfg(debug_assertions)] 
+            {
+                // Tenta pegar a janela principal e abrir o inspetor
+                if let Some(window) = app.get_webview_window("main") {
+                    window.open_devtools();
+                }
+            }
+            
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+            commands::containers::list_containers,
+            commands::system::manage_docker
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
