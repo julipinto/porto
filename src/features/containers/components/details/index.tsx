@@ -4,8 +4,9 @@ import { type Component, createSignal, Match, Switch } from "solid-js";
 import { DetailsHeader } from "./details-header";
 import { DetailsTabs, type TabOption } from "./details-tabs";
 import { useUIStore } from "../../../../stores/ui-store";
-import { LogsTerminal } from "./logs-terminal";
+import { LogsTerminal } from "./logs/logs-terminal";
 import { InspectView } from "./inspect";
+import { StatsView } from "./stats";
 
 export const ContainerDetails: Component = () => {
   const { selectedContainerId, setSelectedContainerId } = useUIStore();
@@ -34,7 +35,7 @@ export const ContainerDetails: Component = () => {
           </Match>
 
           <Match when={activeTab() === "stats"}>
-            <div class="p-8 text-neutral-500">Gráficos de CPU/RAM (Em breve)</div>
+            <StatsView containerId={containerId()} />
           </Match>
         </Switch>
       </div>

@@ -36,7 +36,8 @@ pub fn run() {
             commands::images::remove_image,
             commands::volumes::list_volumes,
             commands::volumes::remove_volume,
-            commands::container_logs::stream_container_logs
+            commands::container_logs::stream_container_logs,
+            commands::container_stats::stream_container_stats,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

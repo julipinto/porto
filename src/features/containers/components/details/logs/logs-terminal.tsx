@@ -1,6 +1,6 @@
 import { type Component, createEffect, For, Show } from "solid-js";
 import { Loader2, Terminal } from "lucide-solid";
-import { useContainerLogs } from "../../hooks/use-container-logs";
+import { useContainerLogs } from "../../../hooks/use-container-logs";
 
 interface Props {
   containerId: string;
