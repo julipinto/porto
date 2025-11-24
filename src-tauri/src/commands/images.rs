@@ -19,7 +19,9 @@ pub async fn list_images() -> Result<Vec<bollard::models::ImageSummary>, String>
 }
 
 #[tauri::command]
-pub async fn remove_image(id: String) -> Result<Vec<bollard::models::ImageDeleteResponseItem>, String> {
+pub async fn remove_image(
+    id: String,
+) -> Result<Vec<bollard::models::ImageDeleteResponseItem>, String> {
     let docker = docker::connect()?;
 
     let options = Some(RemoveImageOptions {
