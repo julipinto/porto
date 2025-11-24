@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/solid-query";
 import { dockerInvoke, isDockerOnline } from "../../../lib/docker-state";
 import { useDockerSystem } from "../../system/hooks/use-docker-system";
-import { ImageSummary } from "../types";
+import type { ImageSummary } from "../types";
 
 export function useImages() {
   const system = useDockerSystem();

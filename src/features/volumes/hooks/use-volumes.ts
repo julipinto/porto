@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/solid-query";
 import { dockerInvoke, isDockerOnline } from "../../../lib/docker-state";
 import { useDockerSystem } from "../../system/hooks/use-docker-system";
-import { Volume } from "../types";
+import type { Volume } from "../types";
 
 export function useVolumes() {
   const system = useDockerSystem();

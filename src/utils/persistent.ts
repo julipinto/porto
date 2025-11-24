@@ -1,4 +1,4 @@
-import { createEffect, createSignal, Signal } from "solid-js";
+import { createEffect, createSignal, type Signal } from "solid-js";
 
 export function createPersistentSignal<T>(key: string, initialValue: T): Signal<T> {
   const storedValue = localStorage.getItem(key);
@@ -9,7 +9,7 @@ export function createPersistentSignal<T>(key: string, initialValue: T): Signal<
     try {
       // Tenta fazer o parse do JSON salvo
       startValue = JSON.parse(storedValue);
-    } catch (e) {
+    } catch (_e) {
       console.warn(`Erro ao ler chave '${key}' do storage, usando valor inicial.`);
     }
   }

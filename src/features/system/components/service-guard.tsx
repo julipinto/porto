@@ -1,4 +1,4 @@
-import { ParentComponent, Show } from "solid-js";
+import { type ParentComponent, Show } from "solid-js";
 import { useDockerSystem } from "../hooks/use-docker-system";
 import { DockerOffScreen } from "./docker-off-screen";
 

@@ -1,6 +1,6 @@
 import { HardDrive, Box, Play, Square, LoaderCircle, EllipsisVertical, Trash2 } from "lucide-solid";
 import { createSignal, Show } from "solid-js";
-import { ContainerSummary } from "../types";
+import type { ContainerSummary } from "../types";
 import { useContainerActions } from "../hooks/use-container-actions";
 
 interface Props {

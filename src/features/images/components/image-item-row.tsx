@@ -1,6 +1,6 @@
-import { Component, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { Layers, Tag, Calendar, HardDrive, Trash2, LoaderCircle } from "lucide-solid";
-import { ImageSummary } from "../types";
+import type { ImageSummary } from "../types";
 import { formatBytes, formatTimeAgo } from "../../../utils/format";
 import { useImageActions } from "../hooks/use-image-actions";
 

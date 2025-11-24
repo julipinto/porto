@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-solid";
-import { Component, Show } from "solid-js";
+import { type Component, Show } from "solid-js";
 
 interface Props {
   isExpanded: boolean;

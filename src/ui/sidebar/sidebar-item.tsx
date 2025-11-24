@@ -1,5 +1,5 @@
-import { Component } from "solid-js";
-import { LucideProps } from "lucide-solid";
+import type { Component } from "solid-js";
+import type { LucideProps } from "lucide-solid";
 
 interface Props {
   icon: Component<LucideProps>;

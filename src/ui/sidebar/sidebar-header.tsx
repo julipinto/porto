@@ -1,5 +1,5 @@
 import { LayoutGrid } from "lucide-solid";
-import { Component } from "solid-js";
+import type { Component } from "solid-js";
 
 interface Props {
   isExpanded: boolean;

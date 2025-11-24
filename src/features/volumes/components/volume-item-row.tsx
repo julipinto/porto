@@ -1,6 +1,6 @@
-import { Component, createSignal, Show } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { Database, Trash2, Loader2, FolderOpen, Clock } from "lucide-solid";
-import { Volume } from "../types";
+import type { Volume } from "../types";
 import { useVolumeActions } from "../hooks/use-volume-actions";
 import { formatTimeAgo } from "../../../utils/format";
 
