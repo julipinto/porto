@@ -1,17 +1,38 @@
-import { HardDrive, Box, EllipsisVertical } from "lucide-solid";
+import { HardDrive, Box, EllipsisVertical, LoaderCircle, Play, Square } from "lucide-solid";
 import type { ContainerSummary } from "../types";
+import { createSignal, Show } from "solid-js";
+import { useContainerActions } from "../hooks/use-container-actions";
 
 interface Props {
   container: ContainerSummary;
-  isNested?: boolean; // Controla se é filho de um grupo
+  isNested?: boolean;
 }
 
 export function ContainerItemRow(props: Props) {
-  // Helpers visuais (poderiam estar em outro arquivo utils se crescerem)
+  const { startContainer, stopContainer } = useContainerActions();
+  const [isLoading, setIsLoading] = createSignal(false);
+
   const isRunning = () => props.container.State === "running";
   const shortId = () => props.container.Id.substring(0, 12);
   const imageName = () => props.container.Image.split(":")[0];
   const imageTag = () => props.container.Image.split(":")[1] || "latest";
+
+  const handleAction = async () => {
+    if (isLoading()) return;
+    setIsLoading(true);
+
+    try {
+      if (isRunning()) {
+        await stopContainer(props.container.Id);
+      } else {
+        await startContainer(props.container.Id);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <tr class="group hover:bg-neutral-800/40 transition-colors duration-150 border-b border-transparent hover:border-neutral-800">
@@ -67,14 +88,40 @@ export function ContainerItemRow(props: Props) {
         </div>
       </td>
 
-      {/* Coluna 4: Ações */}
+      {/* Coluna 4: Ações (Botões) */}
       <td class="p-4 text-right align-top">
-        <button
-          type="button"
-          class="p-2 hover:bg-neutral-800 rounded text-neutral-500 hover:text-white transition-colors"
-        >
-          <EllipsisVertical class="w-4 h-4" />
-        </button>
+        <div class="flex items-center justify-end gap-2">
+          {/* BOTÃO DE START/STOP */}
+          <button
+            type="button"
+            onClick={handleAction}
+            disabled={isLoading()}
+            title={isRunning() ? "Parar Container" : "Iniciar Container"}
+            class={`
+              p-2 rounded-lg transition-all border border-transparent
+              disabled:opacity-50 disabled:cursor-not-allowed
+              ${
+                isRunning()
+                  ? "text-red-400 hover:bg-red-500/10 hover:border-red-500/20"
+                  : "text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/20"
+              }
+            `}
+          >
+            <Show when={!isLoading()} fallback={<LoaderCircle class="w-4 h-4 animate-spin" />}>
+              <Show when={isRunning()} fallback={<Play class="w-4 h-4 fill-current" />}>
+                <Square class="w-4 h-4 fill-current" />
+              </Show>
+            </Show>
+          </button>
+
+          {/* Menu de Contexto (Placeholder) */}
+          <button
+            type="button"
+            class="p-2 hover:bg-neutral-800 rounded text-neutral-500 hover:text-white transition-colors"
+          >
+            <EllipsisVertical class="w-4 h-4" />
+          </button>
+        </div>
       </td>
     </tr>
   );
