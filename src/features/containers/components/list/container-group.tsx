@@ -1,6 +1,6 @@
 import { createSignal, For, Show } from "solid-js";
 import { ChevronRight, ChevronDown, Layers } from "lucide-solid";
-import type { ContainerSummary } from "../types";
+import type { ContainerSummary } from "../../types";
 import { ContainerItemRow } from "./container-item-row";
 
 interface Props {

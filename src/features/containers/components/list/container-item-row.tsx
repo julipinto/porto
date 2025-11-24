@@ -1,7 +1,8 @@
 import { HardDrive, Box, Play, Square, LoaderCircle, EllipsisVertical, Trash2 } from "lucide-solid";
 import { createSignal, Show } from "solid-js";
-import type { ContainerSummary } from "../types";
-import { useContainerActions } from "../hooks/use-container-actions";
+import type { ContainerSummary } from "../../types";
+import { useContainerActions } from "../../hooks/use-container-actions";
+import { useUIStore } from "../../../../stores/ui-store";
 
 interface Props {
   container: ContainerSummary;
@@ -10,6 +11,7 @@ interface Props {
 
 export function ContainerItemRow(props: Props) {
   const { startContainer, stopContainer, removeContainer } = useContainerActions();
+  const { setSelectedContainerId } = useUIStore();
 
   // Estado mais granular: 'start' | 'stop' | 'delete' | null
   const [actionState, setActionState] = createSignal<string | null>(null);
@@ -66,10 +68,16 @@ export function ContainerItemRow(props: Props) {
               <Box class="w-4 h-4" />
             )}
           </div>
+
           <div>
-            <div class="font-medium text-neutral-200 group-hover:text-blue-400 transition-colors">
+            <button
+              type="button"
+              onClick={() => setSelectedContainerId(props.container.Id)}
+              class="font-medium text-neutral-200 group-hover:text-blue-400 transition-colors text-left hover:underline decoration-blue-500/50 decoration-2 underline-offset-2"
+            >
               {props.container.Names[0]?.replace("/", "") || "Sem Nome"}
-            </div>
+            </button>
+
             <div class="text-[10px] text-neutral-600 font-mono mt-1 uppercase bg-neutral-950 inline-block px-1.5 py-0.5 rounded border border-neutral-800">
               {shortId()}
             </div>

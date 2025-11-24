@@ -1,3 +1,4 @@
+import { createSignal } from "solid-js";
 import { createPersistentSignal } from "../utils/persistent";
 
 export type ViewType = "containers" | "images" | "volumes" | "settings";
@@ -12,12 +13,20 @@ const [activeView, setActiveView] = createPersistentSignal<ViewType>(
   "containers",
 );
 
+const [selectedContainerId, setSelectedContainerId] = createSignal<string | null>(null);
+
 export const useUIStore = () => {
   return {
     isSidebarExpanded,
     toggleSidebar: () => setIsSidebarExpanded((prev) => !prev),
 
     activeView,
-    setActiveView,
+    setActiveView: (view: ViewType) => {
+      setActiveView(view);
+      setSelectedContainerId(null);
+    },
+
+    selectedContainerId,
+    setSelectedContainerId,
   };
 };

@@ -3,10 +3,11 @@ import "./App.css";
 import { useUIStore } from "./stores/ui-store";
 import { ServiceGuard } from "./features/system/components/service-guard";
 import { Sidebar } from "./ui/sidebar";
-import { Match, Switch } from "solid-js";
-import { ContainerList } from "./features/containers/components/container-list";
+import { Match, type ParentComponent, Switch } from "solid-js";
+import { ContainerList } from "./features/containers/components/list/container-list";
 import { ImageList } from "./features/images/components/image-list";
 import { VolumeList } from "./features/volumes/components/volume-list";
+import { ContainerDetails } from "./features/containers/components/details";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,7 +19,7 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const { activeView } = useUIStore();
+  const { activeView, selectedContainerId } = useUIStore();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -28,29 +29,42 @@ function App() {
 
           {/* 2. Área de Conteúdo */}
           <main class="flex-1 flex flex-col min-w-0 bg-black/20">
-            <div class="flex-1 overflow-auto p-8 custom-scrollbar">
-              <div class="max-w-7xl mx-auto">
-                <Switch>
-                  <Match when={activeView() === "containers"}>
+            <div class="flex-1 overflow-hidden relative">
+              <Switch>
+                <Match when={selectedContainerId()}>
+                  {/* Padding movido para cá para o scrollbar ficar na borda da tela se quiser */}
+                  <div class="h-full w-full p-6">
+                    <ContainerDetails />
+                  </div>
+                </Match>
+
+                <Match when={activeView() === "containers"}>
+                  <PageWrapper>
                     <ContainerList />
-                  </Match>
+                  </PageWrapper>
+                </Match>
 
-                  <Match when={activeView() === "images"}>
+                <Match when={activeView() === "images"}>
+                  <PageWrapper>
                     <ImageList />
-                  </Match>
+                  </PageWrapper>
+                </Match>
 
-                  <Match when={activeView() === "volumes"}>
+                <Match when={activeView() === "volumes"}>
+                  <PageWrapper>
                     <VolumeList />
-                  </Match>
+                  </PageWrapper>
+                </Match>
 
-                  <Match when={activeView() === "settings"}>
+                <Match when={activeView() === "settings"}>
+                  <PageWrapper>
                     <div class="p-12 text-center border border-dashed border-neutral-800 rounded-xl">
                       <h2 class="text-xl font-bold text-neutral-500">Configurações</h2>
                       <p class="text-neutral-600 mt-2">Em breve...</p>
                     </div>
-                  </Match>
-                </Switch>
-              </div>
+                  </PageWrapper>
+                </Match>
+              </Switch>
             </div>
           </main>
         </div>
@@ -58,5 +72,11 @@ function App() {
     </QueryClientProvider>
   );
 }
+
+const PageWrapper: ParentComponent = (props) => (
+  <div class="h-full w-full overflow-y-auto custom-scrollbar p-8">
+    <div class="max-w-7xl mx-auto">{props.children}</div>
+  </div>
+);
 
 export default App;

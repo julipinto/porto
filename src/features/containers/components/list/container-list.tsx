@@ -1,9 +1,9 @@
 import { createMemo, For, Show } from "solid-js";
 import { RefreshCw, Zap, Power, Box } from "lucide-solid";
 
-import { useContainers } from "../hooks/use-containers";
-import { useDockerSystem } from "../../system/hooks/use-docker-system";
-import { groupContainersByStack } from "../utils/grouping";
+import { useContainers } from "../../hooks/use-containers";
+import { useDockerSystem } from "../../../system/hooks/use-docker-system";
+import { groupContainersByStack } from "../../utils/grouping";
 import { ContainerGroup } from "./container-group";
 import { ContainerItemRow } from "./container-item-row";
 
