@@ -65,17 +65,6 @@ export function ContainerList() {
               )}
             </For>
 
-            <Show when={data().sortedGroupNames.length > 0 && data().standalone.length > 0}>
-              <tr class="bg-neutral-950/80 border-y border-neutral-800">
-                <td
-                  colspan={4}
-                  class="p-2 pl-4 text-[10px] text-neutral-500 font-bold uppercase tracking-widest"
-                >
-                  Outros
-                </td>
-              </tr>
-            </Show>
-
             <For each={data().standalone}>
               {(container) => <ContainerItemRow container={container} />}
             </For>
