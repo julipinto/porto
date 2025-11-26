@@ -26,4 +26,6 @@ bollard = "0.19.4"
 tokio = { version = "1.48.0", features = ["full"] }
 futures-util = "0.3.31"
 sysinfo = "0.37.2"
+tauri-plugin-dialog = "2"
+tauri-plugin-os = "2"
 

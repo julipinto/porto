@@ -1,3 +1,4 @@
+use crate::services::docker::DockerConfig;
 use crate::services::shell::ShellManager;
 use tauri::{AppHandle, State};
 
@@ -5,9 +6,10 @@ use tauri::{AppHandle, State};
 pub async fn open_terminal(
     app: AppHandle,
     state: State<'_, ShellManager>,
+    docker_state: State<'_, DockerConfig>,
     id: String,
 ) -> Result<(), String> {
-    state.open_session(app, id).await
+    state.open_session(app, docker_state, id).await
 }
 
 #[tauri::command]

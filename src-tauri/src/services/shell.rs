@@ -1,9 +1,9 @@
+use crate::services::docker::{self, DockerConfig};
 use bollard::exec::{CreateExecOptions, StartExecResults};
-use bollard::Docker;
 use futures_util::stream::StreamExt;
 use std::collections::HashMap;
 use std::sync::Arc;
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, State};
 use tokio::io::AsyncWriteExt; // <--- Importante para o write_all e flush
 use tokio::sync::Mutex;
 
@@ -21,8 +21,13 @@ impl ShellManager {
         }
     }
 
-    pub async fn open_session(&self, app: AppHandle, container_id: String) -> Result<(), String> {
-        let docker = Docker::connect_with_local_defaults().map_err(|e| e.to_string())?;
+    pub async fn open_session(
+        &self,
+        app: AppHandle,
+        state: State<'_, DockerConfig>,
+        container_id: String,
+    ) -> Result<(), String> {
+        let docker = docker::connect(&state).map_err(|e| e.to_string())?;
 
         // 1. Cria a configuração de execução
         let config = CreateExecOptions {

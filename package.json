@@ -20,7 +20,9 @@
   "dependencies": {
     "@tanstack/solid-query": "^5.90.13",
     "@tauri-apps/api": "^2.9.0",
+    "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-os": "~2",
     "@tauri-apps/plugin-shell": "^2.3.3",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",

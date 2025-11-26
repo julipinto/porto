@@ -1,15 +1,18 @@
-use crate::services::docker;
+use crate::services::docker::{self, DockerConfig};
+
+use bollard::models::ContainerInspectResponse;
 use bollard::query_parameters::{
     InspectContainerOptions, ListContainersOptions, RemoveContainerOptions, StartContainerOptions,
     StopContainerOptions,
 };
 use std::collections::HashMap;
-
-use bollard::models::ContainerInspectResponse;
+use tauri::State;
 
 #[tauri::command]
-pub async fn list_containers() -> Result<Vec<bollard::models::ContainerSummary>, String> {
-    let docker = docker::connect()?;
+pub async fn list_containers(
+    state: State<'_, DockerConfig>,
+) -> Result<Vec<bollard::models::ContainerSummary>, String> {
+    let docker = docker::connect(&state)?;
 
     let options = Some(ListContainersOptions {
         all: true,
@@ -25,8 +28,8 @@ pub async fn list_containers() -> Result<Vec<bollard::models::ContainerSummary>,
 }
 
 #[tauri::command]
-pub async fn start_container(id: String) -> Result<(), String> {
-    let docker = docker::connect()?;
+pub async fn start_container(state: State<'_, DockerConfig>, id: String) -> Result<(), String> {
+    let docker = docker::connect(&state)?;
 
     docker
         .start_container(&id, None::<StartContainerOptions>)
@@ -37,8 +40,8 @@ pub async fn start_container(id: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn stop_container(id: String) -> Result<(), String> {
-    let docker = docker::connect()?;
+pub async fn stop_container(state: State<'_, DockerConfig>, id: String) -> Result<(), String> {
+    let docker = docker::connect(&state)?;
 
     docker
         .stop_container(&id, None::<StopContainerOptions>)
@@ -49,8 +52,8 @@ pub async fn stop_container(id: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn remove_container(id: String) -> Result<(), String> {
-    let docker = docker::connect()?;
+pub async fn remove_container(state: State<'_, DockerConfig>, id: String) -> Result<(), String> {
+    let docker = docker::connect(&state)?;
 
     // force: true garante que remove mesmo se estiver rodando (kill + rm)
     // v: true remove volumes anônimos associados (boa prática pra não deixar lixo)
@@ -69,10 +72,12 @@ pub async fn remove_container(id: String) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub async fn inspect_container(id: String) -> Result<ContainerInspectResponse, String> {
-    let docker = docker::connect()?;
+pub async fn inspect_container(
+    state: State<'_, DockerConfig>,
+    id: String,
+) -> Result<ContainerInspectResponse, String> {
+    let docker = docker::connect(&state)?;
 
-    // CORREÇÃO AQUI: Tipamos o None com InspectContainerOptions
     let result = docker
         .inspect_container(&id, None::<InspectContainerOptions>)
         .await
@@ -82,8 +87,12 @@ pub async fn inspect_container(id: String) -> Result<ContainerInspectResponse, S
 }
 
 #[tauri::command]
-pub async fn manage_container_group(group: String, action: String) -> Result<(), String> {
-    let docker = docker::connect()?;
+pub async fn manage_container_group(
+    state: State<'_, DockerConfig>,
+    group: String,
+    action: String,
+) -> Result<(), String> {
+    let docker = docker::connect(&state)?;
 
     let mut filters = HashMap::new();
     filters.insert(

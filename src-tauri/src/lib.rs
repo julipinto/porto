@@ -1,6 +1,7 @@
 mod commands;
 mod services;
 
+use crate::services::docker::DockerConfig;
 use crate::services::monitor::SystemMonitor;
 use crate::services::shell::ShellManager;
 
@@ -11,9 +12,12 @@ use crate::services::shell::ShellManager;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(SystemMonitor::new())
         .manage(ShellManager::new())
+        .manage(DockerConfig::new())
         .setup(|app| {
             let handle = app.handle().clone();
 
@@ -48,7 +52,9 @@ pub fn run() {
             commands::monitor::get_host_stats,
             commands::terminal::open_terminal,
             commands::terminal::write_terminal,
-            commands::terminal::resize_terminal
+            commands::terminal::resize_terminal,
+            commands::contexts::list_docker_contexts,
+            commands::contexts::set_docker_context,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
