@@ -1,4 +1,4 @@
-import { Component, createEffect, For, Show } from "solid-js";
+import { type Component, createEffect, For, Show } from "solid-js";
 import { Loader2, Terminal, PowerOff } from "lucide-solid";
 import { useContainerLogs } from "../../../hooks/use-container-logs";
 import { useContainerInspect } from "../../../hooks/use-container-inspect";

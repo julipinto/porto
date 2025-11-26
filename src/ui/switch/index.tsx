@@ -1,4 +1,4 @@
-import { Component, Show } from "solid-js";
+import { type Component, Show } from "solid-js";
 
 interface Props {
   checked: boolean;
@@ -14,11 +14,17 @@ export const Switch: Component<Props> = (props) => {
   return (
     <div class="flex items-start justify-between gap-4 py-3">
       {/* Labels */}
-      <div class="flex flex-col cursor-pointer" onClick={() => props.onChange(!props.checked)}>
+      <button
+        type="button"
+        // Classes para remover estilo padrão de botão e alinhar texto
+        class="flex flex-col cursor-pointer bg-transparent border-none p-0 text-left"
+        onClick={() => props.onChange(!props.checked)}
+      >
         <Show when={props.label}>
           <label
             for={inputId}
-            class="text-sm font-medium text-neutral-200 cursor-pointer select-none"
+            // pointer-events-none ajuda a evitar duplo clique se o label já apontar pro input
+            class="text-sm font-medium text-neutral-200 cursor-pointer select-none pointer-events-none"
           >
             {props.label}
           </label>
@@ -26,7 +32,7 @@ export const Switch: Component<Props> = (props) => {
         <Show when={props.description}>
           <span class="text-xs text-neutral-500 mt-0.5 select-none">{props.description}</span>
         </Show>
-      </div>
+      </button>
 
       {/* O Botão Toggle */}
       <button

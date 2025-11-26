@@ -47,3 +47,10 @@ export interface ContainerInspectInfo {
   // Permitimos outros campos desconhecidos para não quebrar se acessarmos algo extra
   [key: string]: unknown;
 }
+
+export interface PortInfo {
+  IP?: string;
+  PrivatePort: number;
+  PublicPort?: number;
+  Type: string;
+}

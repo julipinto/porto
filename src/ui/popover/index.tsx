@@ -3,9 +3,9 @@ import {
   createContext,
   useContext,
   Show,
-  ParentComponent,
-  Accessor,
-  Setter,
+  type ParentComponent,
+  type Accessor,
+  type Setter,
   onCleanup,
 } from "solid-js";
 import { Portal } from "solid-js/web";
@@ -36,16 +36,17 @@ export const PopoverTrigger: ParentComponent<{ class?: string }> = (props) => {
   if (!ctx) throw new Error("PopoverTrigger must be used within a Popover");
 
   return (
-    <div
+    <button
+      type="button"
       ref={ctx.setTriggerRef}
       onClick={(e) => {
-        e.stopPropagation(); // Evita bolhas indesejadas
+        e.stopPropagation();
         ctx.setIsOpen(!ctx.isOpen());
       }}
-      class={`cursor-pointer ${props.class || ""}`}
+      class={`cursor-pointer bg-transparent border-none p-0 text-left ${props.class || ""}`}
     >
       {props.children}
-    </div>
+    </button>
   );
 };
 
@@ -69,7 +70,7 @@ export const PopoverContent: ParentComponent<{ class?: string }> = (props) => {
   };
 
   // Fecha ao clicar fora (Backdrop)
-  const close = (e: MouseEvent) => {
+  const close = (e: Event) => {
     e.stopPropagation();
     ctx.setIsOpen(false);
   };
@@ -78,8 +79,13 @@ export const PopoverContent: ParentComponent<{ class?: string }> = (props) => {
     <Show when={ctx.isOpen()}>
       <Portal>
         {/* 1. Camada invisível na tela toda para detectar clique fora */}
-        <div class="fixed inset-0 z-[9998] cursor-default" onClick={close} />
-
+        <button
+          type="button"
+          tabIndex={-1}
+          class="fixed inset-0 z-[9998] cursor-default bg-transparent border-none w-full h-full block outline-none"
+          onClick={close}
+          onKeyDown={close}
+        />
         {/* 2. O Conteúdo Posicionado */}
         <div
           ref={() => {

@@ -1,4 +1,4 @@
-import { createSignal, createContext, useContext, ParentComponent, Show } from "solid-js";
+import { createSignal, createContext, useContext, type ParentComponent, Show } from "solid-js";
 
 // Contexto para saber qual aba está ativa
 const TabsContext = createContext<{

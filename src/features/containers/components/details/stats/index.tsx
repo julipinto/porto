@@ -1,6 +1,6 @@
-import { Component, createEffect, createSignal, Show } from "solid-js";
+import { type Component, createEffect, createSignal, Show } from "solid-js";
 import { SolidApexCharts } from "solid-apexcharts";
-import { ApexOptions } from "apexcharts";
+import type { ApexOptions } from "apexcharts";
 import { Cpu, HardDrive, Loader2, PowerOff } from "lucide-solid";
 import { useContainerInspect } from "../../../hooks/use-container-inspect";
 import { useContainerStats } from "../../../hooks/use-container-stats";

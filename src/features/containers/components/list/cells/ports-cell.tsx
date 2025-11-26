@@ -1,11 +1,11 @@
-import { For, Show, Component } from "solid-js";
+import { For, Show, type Component } from "solid-js";
 import { ExternalLink, ChevronDown } from "lucide-solid";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import type { ContainerSummary } from "../../../types";
+import type { ContainerSummary, PortInfo } from "../../../types";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../../ui/popover";
 
 const MAX_VISIBLE_PORTS = 1;
-const PortButton: Component<{ port: any; onClick: () => void }> = (props) => (
+const PortButton: Component<{ port: PortInfo; onClick: () => void }> = (props) => (
   <button
     type="button"
     onClick={props.onClick}
@@ -29,7 +29,8 @@ export function PortsCell(props: { container: ContainerSummary }) {
     return unique.sort((a, b) => (a.PublicPort || 0) - (b.PublicPort || 0));
   };
 
-  const handleOpenPort = async (port: number) => {
+  const handleOpenPort = async (port?: number) => {
+    if (port === undefined) return;
     try {
       await openUrl(`http://localhost:${port}`);
     } catch (e) {
@@ -50,7 +51,7 @@ export function PortsCell(props: { container: ContainerSummary }) {
           hiddenPorts.length === 0 ? <span class="text-neutral-600 text-xs italic">-</span> : null
         }
       >
-        {(port) => <PortButton port={port} onClick={() => handleOpenPort(port.PublicPort!)} />}
+        {(port) => <PortButton port={port} onClick={() => handleOpenPort(port.PublicPort ?? 0)} />}
       </For>
 
       {/* Portas Ocultas (USANDO O NOVO COMPONENTE) */}
@@ -70,7 +71,7 @@ export function PortsCell(props: { container: ContainerSummary }) {
           <PopoverContent class="p-2 bg-[#1a1d24] border border-neutral-700 rounded-lg shadow-2xl flex flex-col gap-1.5 min-w-[160px] max-h-[300px] overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-100">
             <For each={hiddenPorts}>
               {(port) => (
-                <PortButton port={port} onClick={() => handleOpenPort(port.PublicPort!)} />
+                <PortButton port={port} onClick={() => handleOpenPort(port.PublicPort ?? 0)} />
               )}
             </For>
           </PopoverContent>
