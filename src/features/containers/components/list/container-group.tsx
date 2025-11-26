@@ -47,7 +47,7 @@ export function ContainerGroup(props: Props) {
         class="bg-neutral-800/20 hover:bg-neutral-800/50 cursor-pointer transition-colors select-none group border-b border-transparent hover:border-neutral-800"
         onClick={toggle}
       >
-        <td class="p-3 pl-2" colspan={4}>
+        <td class="p-3 pl-2" colspan={5}>
           <div class="flex items-center justify-between pr-4">
             {/* Lado Esquerdo: Nome e Ícone */}
             <div class="flex items-center gap-3">

@@ -54,6 +54,7 @@ export function ContainerList() {
             <tr class="bg-neutral-900 border-b border-neutral-800 text-xs uppercase tracking-wider text-neutral-500 font-semibold">
               <th class="p-4 w-[40%]">Nome / ID</th>
               <th class="p-4 w-[25%]">Imagem</th>
+              <th class="p-4 w-[20%]">Portas</th>
               <th class="p-4">Status</th>
               <th class="p-4 text-right">Ações</th>
             </tr>
@@ -64,14 +65,13 @@ export function ContainerList() {
                 <ContainerGroup name={groupName} containers={data().groups[groupName]} />
               )}
             </For>
-
             <For each={data().standalone}>
               {(container) => <ContainerItemRow container={container} />}
             </For>
 
             <Show when={data().sortedGroupNames.length === 0 && data().standalone.length === 0}>
               <tr>
-                <td colspan={4} class="p-12 text-center text-neutral-500">
+                <td colspan={5} class="p-12 text-center text-neutral-500">
                   <div class="flex flex-col items-center gap-2">
                     <Show when={query.isLoading} fallback={<Box class="w-8 h-8 opacity-20" />}>
                       <RefreshCw class="w-8 h-8 opacity-50 animate-spin" />

@@ -5,6 +5,12 @@ export interface ContainerSummary {
   State: string; // "running", "exited", etc.
   Status: string; // "Up 2 hours"
   Labels: Record<string, string>;
+  Ports?: Array<{
+    IP?: string;
+    PrivatePort: number;
+    PublicPort?: number;
+    Type: string;
+  }>;
 }
 
 export interface ContainerInspectInfo {
