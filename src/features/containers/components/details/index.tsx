@@ -1,14 +1,19 @@
-import type { Component } from "solid-js";
+import { lazy, Suspense, type Component } from "solid-js";
 import { FileText, Activity, Info, TerminalIcon } from "lucide-solid";
 
 // 2. Componentes da Feature
 import { DetailsHeader } from "./details-header";
-import { InspectView } from "./inspect";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../../ui/tabs";
 import { useUIStore } from "../../../../stores/ui-store";
-import { LogsTerminal } from "./logs/logs-terminal";
-import { StatsView } from "./stats";
-import { TerminalView } from "./terminal-view";
+
+const LogsTerminal = lazy(() =>
+  import("./logs/logs-terminal").then((m) => ({ default: m.LogsTerminal })),
+);
+const StatsView = lazy(() => import("./stats").then((m) => ({ default: m.StatsView })));
+const InspectView = lazy(() => import("./inspect").then((m) => ({ default: m.InspectView })));
+const TerminalView = lazy(() =>
+  import("./terminal-view").then((m) => ({ default: m.TerminalView })),
+);
 
 export const ContainerDetails: Component = () => {
   const { selectedContainerId, setSelectedContainerId } = useUIStore();
@@ -43,19 +48,27 @@ export const ContainerDetails: Component = () => {
 
         <div class="flex-1 bg-neutral-900/30 rounded-xl border border-neutral-800 overflow-hidden relative shadow-inner">
           <TabsContent value="logs" class="h-full">
-            <LogsTerminal containerId={containerId()} />
+            <Suspense fallback={<p>Carregando logs...</p>}>
+              <LogsTerminal containerId={containerId()} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="inspect" class="h-full">
-            <InspectView containerId={containerId()} />
+            <Suspense fallback={<p>Carregando detalhes...</p>}>
+              <InspectView containerId={containerId()} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="stats" class="h-full">
-            <StatsView containerId={containerId()} />
+            <Suspense fallback={<p>Carregando gráficos...</p>}>
+              <StatsView containerId={containerId()} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="terminal" class="h-full">
-            <TerminalView containerId={containerId()} />
+            <Suspense fallback={<p>Carregando terminal...</p>}>
+              <TerminalView containerId={containerId()} />
+            </Suspense>
           </TabsContent>
         </div>
       </Tabs>

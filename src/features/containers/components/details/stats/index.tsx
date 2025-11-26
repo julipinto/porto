@@ -1,5 +1,4 @@
-import { type Component, createEffect, createSignal, Show } from "solid-js";
-import { SolidApexCharts } from "solid-apexcharts";
+import { type Component, createEffect, createSignal, lazy, Show, Suspense } from "solid-js";
 import type { ApexOptions } from "apexcharts";
 import { Cpu, HardDrive, Loader2, PowerOff } from "lucide-solid";
 import { useContainerInspect } from "../../../hooks/use-container-inspect";
@@ -9,6 +8,10 @@ import { formatBytes } from "../../../../../utils/format";
 interface Props {
   containerId: string;
 }
+
+const SolidApexCharts = lazy(() =>
+  import("solid-apexcharts").then((m) => ({ default: m.SolidApexCharts })),
+);
 
 export const StatsView: Component<Props> = (props) => {
   // 1. Precisamos saber se está rodando
@@ -101,22 +104,24 @@ export const StatsView: Component<Props> = (props) => {
               </div>
             </div>
             <div class="h-48 -ml-4 -mr-2">
-              <SolidApexCharts
-                type="area"
-                options={{
-                  ...commonOptions,
-                  colors: ["#3b82f6"],
-                  yaxis: {
-                    max: 100,
-                    min: 0,
-                    tickAmount: 4,
-                    labels: { formatter: (val) => `${val.toFixed(0)}%` },
-                  },
-                }}
-                series={[{ name: "CPU", data: cpuHistory() }]}
-                width="100%"
-                height="100%"
-              />
+              <Suspense fallback={<div class="h-40 bg-neutral-900/50 animate-pulse rounded" />}>
+                <SolidApexCharts
+                  type="area"
+                  options={{
+                    ...commonOptions,
+                    colors: ["#3b82f6"],
+                    yaxis: {
+                      max: 100,
+                      min: 0,
+                      tickAmount: 4,
+                      labels: { formatter: (val: number) => `${val.toFixed(0)}%` },
+                    },
+                  }}
+                  series={[{ name: "CPU", data: cpuHistory() }]}
+                  width="100%"
+                  height="100%"
+                />
+              </Suspense>
             </div>
           </div>
 
