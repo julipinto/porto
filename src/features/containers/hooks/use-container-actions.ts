@@ -19,9 +19,19 @@ export function useContainerActions() {
     queryClient.invalidateQueries({ queryKey: ["containers"] });
   };
 
+  const toggleGroup = async (groupName: string, action: "start" | "stop") => {
+    await dockerInvoke("manage_container_group", {
+      group: groupName,
+      action: action,
+    });
+
+    queryClient.invalidateQueries({ queryKey: ["containers"] });
+  };
+
   return {
     startContainer,
     stopContainer,
     removeContainer,
+    toggleGroup,
   };
 }

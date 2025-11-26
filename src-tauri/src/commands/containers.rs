@@ -3,6 +3,7 @@ use bollard::query_parameters::{
     InspectContainerOptions, ListContainersOptions, RemoveContainerOptions, StartContainerOptions,
     StopContainerOptions,
 };
+use std::collections::HashMap;
 
 use bollard::models::ContainerInspectResponse;
 
@@ -78,4 +79,52 @@ pub async fn inspect_container(id: String) -> Result<ContainerInspectResponse, S
         .map_err(|e| format!("Erro ao inspecionar: {}", e))?;
 
     Ok(result)
+}
+
+#[tauri::command]
+pub async fn manage_container_group(group: String, action: String) -> Result<(), String> {
+    let docker = docker::connect()?;
+
+    let mut filters = HashMap::new();
+    filters.insert(
+        "label".to_string(),
+        vec![format!("com.docker.compose.project={}", group)],
+    );
+
+    let list_options = Some(ListContainersOptions {
+        all: true,
+        filters: Some(filters),
+        ..Default::default()
+    });
+
+    let containers = docker
+        .list_containers(list_options)
+        .await
+        .map_err(|e| format!("Erro ao buscar grupo: {}", e))?;
+
+    for container in containers {
+        if let Some(id) = container.id {
+            let result = match action.as_str() {
+                "start" => {
+                    docker
+                        .start_container(&id, None::<StartContainerOptions>)
+                        .await
+                }
+                "stop" => {
+                    docker
+                        .stop_container(&id, None::<StopContainerOptions>)
+                        .await
+                }
+                _ => Err(bollard::errors::Error::IOError {
+                    err: std::io::Error::new(std::io::ErrorKind::InvalidInput, "Ação inválida"),
+                }),
+            };
+
+            if let Err(e) = result {
+                eprintln!("Erro ao executar {} no container {}: {}", action, id, e);
+            }
+        }
+    }
+
+    Ok(())
 }

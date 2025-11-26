@@ -1,5 +1,5 @@
 import { Box, Layers, Database, Settings } from "lucide-solid";
-import { Component } from "solid-js";
+import type { Component } from "solid-js";
 import { useUIStore } from "../../stores/ui-store";
 
 import { SidebarHeader } from "./sidebar-header";
