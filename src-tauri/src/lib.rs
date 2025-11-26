@@ -2,6 +2,7 @@ mod commands;
 mod services;
 
 use crate::services::monitor::SystemMonitor;
+use crate::services::shell::ShellManager;
 
 // To open DevTools automatically in development mode
 // #[cfg(debug_assertions)]
@@ -12,6 +13,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(SystemMonitor::new())
+        .manage(ShellManager::new())
         .setup(|app| {
             let handle = app.handle().clone();
 
@@ -43,7 +45,10 @@ pub fn run() {
             commands::volumes::remove_volume,
             commands::container_logs::stream_container_logs,
             commands::container_stats::stream_container_stats,
-            commands::monitor::get_host_stats
+            commands::monitor::get_host_stats,
+            commands::terminal::open_terminal,
+            commands::terminal::write_terminal,
+            commands::terminal::resize_terminal
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
