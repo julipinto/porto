@@ -1,4 +1,4 @@
-import { Power, Activity, Settings, AlertTriangle } from "lucide-solid";
+import { Power, Activity, Settings, AlertTriangle, Globe } from "lucide-solid";
 import { Show } from "solid-js";
 import { useUIStore } from "../../../stores/ui-store";
 import { useDockerContextActions } from "../../settings/hooks/use-docker-context-actions";
@@ -10,11 +10,10 @@ interface Props {
 
 export function DockerOffScreen(props: Props) {
   const { setActiveView } = useUIStore();
-  const { activeConnection } = useDockerContextActions();
 
+  const { activeConnection, connectionType } = useDockerContextActions();
   const isLoading = () => props.pendingAction === "start";
-
-  const isLocalDefault = () => activeConnection().includes("/var/run/docker.sock");
+  const canTryAutoStart = () => connectionType() === "local";
 
   return (
     <div class="flex flex-col items-center justify-center h-full text-center space-y-8 animate-in fade-in zoom-in duration-300 p-8">
@@ -28,32 +27,45 @@ export function DockerOffScreen(props: Props) {
 
       <div class="space-y-2 max-w-md">
         <h2 class="text-2xl font-bold text-white tracking-tight">Conexão Indisponível</h2>
+
+        {/* Badge de Tipo de Conexão */}
+        <div class="flex justify-center mb-2">
+          <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-neutral-700 flex items-center gap-1">
+            <Show when={connectionType() === "remote"} fallback="Ambiente Local">
+              <Globe class="w-3 h-3" /> Ambiente Remoto
+            </Show>
+          </span>
+        </div>
+
         <div class="text-neutral-500 text-sm font-mono bg-black/30 p-2 rounded border border-neutral-800 break-all">
           {activeConnection()}
         </div>
-        <p class="text-neutral-400 leading-relaxed">
-          Não foi possível conectar ao Docker Engine neste contexto.
+        <p class="text-neutral-400 leading-relaxed text-sm">
+          Não foi possível conectar ao Docker Engine.
+          <Show when={connectionType() === "remote"}>
+            <br />
+            <span class="text-amber-500/80">Verifique sua VPN ou conexão de rede.</span>
+          </Show>
         </p>
       </div>
 
       {/* Ações */}
       <div class="flex flex-col gap-3 w-full max-w-xs">
-        {/* 1. Botão de Iniciar Serviço (Só aparece se for local padrão) */}
-        <Show when={isLocalDefault()}>
+        {/* Botão de Iniciar (Condicional Limpa) */}
+        <Show when={canTryAutoStart()}>
           <button
             type="button"
             onClick={props.onTurnOn}
             disabled={props.pendingAction !== null}
-            class="group relative inline-flex items-center justify-center px-6 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg hover:bg-blue-500 disabled:opacity-50"
+            class="group relative inline-flex items-center justify-center px-6 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg hover:bg-blue-500 disabled:opacity-50 shadow-lg shadow-blue-900/20"
           >
             <Show when={isLoading()} fallback={<Power class="w-5 h-5 mr-2" />}>
               <Activity class="w-5 h-5 mr-2 animate-spin" />
             </Show>
-            {isLoading() ? "Iniciando..." : "Iniciar Serviço Local"}
+            {isLoading() ? "Tentando iniciar..." : "Iniciar Serviço Local"}
           </button>
         </Show>
 
-        {/* 2. Botão de Configurações (Sempre visível como alternativa) */}
         <button
           type="button"
           onClick={() => setActiveView("settings")}

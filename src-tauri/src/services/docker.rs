@@ -5,30 +5,44 @@ use std::collections::HashMap;
 use std::sync::Mutex;
 use tauri::{AppHandle, Emitter, Manager, State};
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum DockerVariant {
+    Native,  // Docker padrão (/var/run/docker.sock)
+    Podman,  // Podman rootless
+    Desktop, // Docker Desktop (VM)
+    Remote,  // TCP ou SSH
+}
+
 // 1. O Estado que guarda a configuração
 pub struct DockerConfig {
-    // Ex: "unix:///var/run/docker.sock" ou "tcp://192.168.1.5:2375"
     pub uri: Mutex<String>,
+    pub variant: Mutex<DockerVariant>, // <--- Armazena o tipo
 }
 
 impl DockerConfig {
     pub fn new() -> Self {
         Self {
-            // Valor padrão inicial (Tenta o socket padrão do Linux)
             uri: Mutex::new("unix:///var/run/docker.sock".to_string()),
+            variant: Mutex::new(DockerVariant::Native), // Padrão é Native
         }
     }
 
-    pub fn set_uri(&self, new_uri: String) {
+    // Setter inteligente: Atualiza URI e Variante ao mesmo tempo
+    pub fn set_config(&self, new_uri: String, new_variant: DockerVariant) {
         let mut uri = self.uri.lock().unwrap();
+        let mut variant = self.variant.lock().unwrap();
         *uri = new_uri;
+        *variant = new_variant;
     }
 
     pub fn get_uri(&self) -> String {
         self.uri.lock().unwrap().clone()
     }
-}
 
+    pub fn get_variant(&self) -> DockerVariant {
+        *self.variant.lock().unwrap()
+    }
+}
 // 2. A função de conexão (Exige o Estado)
 pub fn connect(state: &State<'_, DockerConfig>) -> Result<Docker, String> {
     let uri = state.get_uri();

@@ -1,7 +1,20 @@
-use crate::services::docker::DockerConfig;
+use crate::services::docker::{DockerConfig, DockerVariant};
 use serde::{Deserialize, Serialize};
 use std::process::Command;
 use tauri::State;
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum ConnectionType {
+    Local,
+    Remote,
+}
+
+#[derive(Serialize)]
+pub struct ContextConfigResponse {
+    pub uri: String,
+    pub connection_type: ConnectionType,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DockerContext {
@@ -63,40 +76,45 @@ pub async fn list_docker_contexts() -> Result<Vec<DockerContext>, String> {
 pub fn set_docker_context(
     state: State<'_, DockerConfig>,
     endpoint: String,
-) -> Result<String, String> {
+) -> Result<ContextConfigResponse, String> {
     let mut final_uri = endpoint.trim().to_string();
+    let connection_type;
+    let variant; // <--- Vamos calcular agora
 
-    // 1. Se for TCP ou SSH, deixamos passar direto
+    // 1. Lógica de Detecção e Formatação
     if final_uri.starts_with("tcp://") || final_uri.starts_with("ssh://") {
-        state.set_uri(final_uri.clone());
-        return Ok(final_uri);
-    }
+        connection_type = ConnectionType::Remote;
+        variant = DockerVariant::Remote;
+    } else {
+        connection_type = ConnectionType::Local;
 
-    // 2. Lógica para WINDOWS (Named Pipes)
-    #[cfg(target_os = "windows")]
-    {
+        // Adiciona prefixos se necessário (Lógica de OS)
+        #[cfg(target_os = "windows")]
         if !final_uri.starts_with("npipe://") {
-            // Apenas adicionamos o prefixo, sem validar existência
             final_uri = format!("npipe://{}", final_uri);
         }
-    }
 
-    // 3. Lógica para LINUX/MAC (Unix Sockets)
-    #[cfg(unix)]
-    {
-        // REMOVEMOS A VALIDAÇÃO DE EXISTÊNCIA (Path::exists)
-        // Motivo: O socket pode não existir AINDA (ex: Docker desligado),
-        // mas queremos permitir que o usuário selecione esse contexto mesmo assim.
-        // Se falhar a conexão depois, o ServiceGuard vai mostrar a tela de erro apropriada.
-
+        #[cfg(unix)]
         if !final_uri.starts_with("unix://") {
             final_uri = format!("unix://{}", final_uri);
         }
+
+        // CLASSIFICAÇÃO DA VARIANTE (O Pulo do Gato 🐈)
+        if final_uri.contains("podman") {
+            variant = DockerVariant::Podman;
+        } else if final_uri.contains("desktop") {
+            variant = DockerVariant::Desktop;
+        } else {
+            variant = DockerVariant::Native;
+        }
     }
 
-    // 4. Salva no Estado Global
-    state.set_uri(final_uri.clone());
+    // 2. Salva TUDO no Estado Global
+    // Agora o estado sabe exatamente quem é, sem precisar adivinhar depois
+    state.set_config(final_uri.clone(), variant);
 
-    // Retorna a URI formatada
-    Ok(final_uri)
+    Ok(ContextConfigResponse {
+        uri: final_uri,
+        connection_type,
+    })
 }
