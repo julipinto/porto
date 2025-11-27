@@ -26,7 +26,7 @@ export const ContainerDetails: Component = () => {
       <DetailsHeader containerId={containerId()} onBack={() => setSelectedContainerId(null)} />
 
       {/* 3. Implementação do UI Kit Tabs */}
-      <Tabs defaultValue="logs" class="flex-1 flex flex-col min-h-0">
+      <Tabs defaultValue="inspect" class="flex-1 flex flex-col min-h-0">
         {/* Barra de Navegação */}
         <TabsList>
           <TabsTrigger value="inspect" class="flex items-center gap-2">
@@ -47,15 +47,15 @@ export const ContainerDetails: Component = () => {
         </TabsList>
 
         <div class="flex-1 bg-neutral-900/30 rounded-xl border border-neutral-800 overflow-hidden relative shadow-inner">
-          <TabsContent value="logs" class="h-full">
-            <Suspense fallback={<p>Carregando logs...</p>}>
-              <LogsTerminal containerId={containerId()} />
-            </Suspense>
-          </TabsContent>
-
           <TabsContent value="inspect" class="h-full">
             <Suspense fallback={<p>Carregando detalhes...</p>}>
               <InspectView containerId={containerId()} />
+            </Suspense>
+          </TabsContent>
+
+                    <TabsContent value="logs" class="h-full">
+            <Suspense fallback={<p>Carregando logs...</p>}>
+              <LogsTerminal containerId={containerId()} />
             </Suspense>
           </TabsContent>
 

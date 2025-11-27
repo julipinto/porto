@@ -24,7 +24,6 @@ export function ContainerItemRow(props: Props) {
         <IdentityCell container={props.container} isNested={props.isNested} />
       </td>
 
-      {/* Imagem (Essa é simples demais pra criar componente, pode ficar aqui) */}
       <td class="p-4 align-top">
         <div class="flex items-center gap-2 text-neutral-400" title={props.container.Image}>
           <HardDrive class="w-4 h-4 shrink-0" />
