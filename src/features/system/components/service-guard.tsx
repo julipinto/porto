@@ -9,7 +9,7 @@ export const ServiceGuard: ParentComponent = (props) => {
     <Show
       when={isDockerOnline()}
       fallback={
-        <div class="h-screen w-screen flex items-center justify-center bg-neutral-950">
+        <div class="h-full w-full flex items-center justify-center bg-neutral-950/50 backdrop-blur-sm">
           <DockerOffScreen
             onTurnOn={() => toggleDockerService("start")}
             pendingAction={pendingAction()}

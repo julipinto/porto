@@ -60,9 +60,43 @@ pub async fn list_docker_contexts() -> Result<Vec<DockerContext>, String> {
 
 // Comando 2: Atualiza o Estado Global na memória do Rust
 #[tauri::command]
-pub fn set_docker_context(state: State<'_, DockerConfig>, endpoint: String) -> Result<(), String> {
-    // Aqui atualizamos o Mutex que criamos no services/docker.rs
-    // A partir de agora, qualquer comando (list_containers, etc) vai usar esse endpoint
-    state.set_uri(endpoint);
-    Ok(())
+pub fn set_docker_context(
+    state: State<'_, DockerConfig>,
+    endpoint: String,
+) -> Result<String, String> {
+    let mut final_uri = endpoint.trim().to_string();
+
+    // 1. Se for TCP ou SSH, deixamos passar direto
+    if final_uri.starts_with("tcp://") || final_uri.starts_with("ssh://") {
+        state.set_uri(final_uri.clone());
+        return Ok(final_uri);
+    }
+
+    // 2. Lógica para WINDOWS (Named Pipes)
+    #[cfg(target_os = "windows")]
+    {
+        if !final_uri.starts_with("npipe://") {
+            // Apenas adicionamos o prefixo, sem validar existência
+            final_uri = format!("npipe://{}", final_uri);
+        }
+    }
+
+    // 3. Lógica para LINUX/MAC (Unix Sockets)
+    #[cfg(unix)]
+    {
+        // REMOVEMOS A VALIDAÇÃO DE EXISTÊNCIA (Path::exists)
+        // Motivo: O socket pode não existir AINDA (ex: Docker desligado),
+        // mas queremos permitir que o usuário selecione esse contexto mesmo assim.
+        // Se falhar a conexão depois, o ServiceGuard vai mostrar a tela de erro apropriada.
+
+        if !final_uri.starts_with("unix://") {
+            final_uri = format!("unix://{}", final_uri);
+        }
+    }
+
+    // 4. Salva no Estado Global
+    state.set_uri(final_uri.clone());
+
+    // Retorna a URI formatada
+    Ok(final_uri)
 }

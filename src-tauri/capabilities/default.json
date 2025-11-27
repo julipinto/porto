@@ -11,6 +11,6 @@
     "core:window:default",
     "opener:default",
     "dialog:default",
-    "os:default"
+    "store:default"
   ]
 }

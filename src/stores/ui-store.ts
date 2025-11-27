@@ -8,7 +8,7 @@ const [isSidebarExpanded, setIsSidebarExpanded] = createPersistentSignal<boolean
   true,
 );
 
-const [activeView, setActiveView] = createPersistentSignal<ViewType>(
+const [activeView, setViewSignal] = createPersistentSignal<ViewType>(
   "last-active-view",
   "containers",
 );
@@ -19,10 +19,10 @@ export const useUIStore = () => {
   return {
     isSidebarExpanded,
     toggleSidebar: () => setIsSidebarExpanded((prev) => !prev),
-
     activeView,
     setActiveView: (view: ViewType) => {
-      setActiveView(view);
+      console.log(view);
+      setViewSignal(view);
       setSelectedContainerId(null);
     },
 

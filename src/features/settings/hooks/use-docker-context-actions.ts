@@ -1,27 +1,38 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useQueryClient } from "@tanstack/solid-query";
-import { type } from "@tauri-apps/plugin-os";
+import { getSetting, saveSetting } from "../../../stores/disk-settings-store";
+
+const [activeConnection, setActiveConnection] = createSignal("unix:///var/run/docker.sock");
+const [customPath, setCustomPath] = createSignal("");
 
 export function useDockerContextActions() {
   const queryClient = useQueryClient();
 
-  const [activeConnection, setActiveConnection] = createSignal("unix:///var/run/docker.sock");
+  onMount(async () => {
+    const savedConn = await getSetting<string>("docker.active-connection");
+    const savedPath = await getSetting<string>("docker.custom-path");
 
-  const [customPath, setCustomPath] = createSignal("");
+    if (savedConn) {
+      setActiveConnection(savedConn);
+      await invoke("set_docker_context", { endpoint: savedConn });
+    }
 
-  const getSystemPrefix = async () => {
-    const osType = await type();
-    if (osType === "windows") return "npipe://";
-    return "unix://";
-  };
+    if (savedPath) setCustomPath(savedPath);
+  });
 
   const applyContext = async (endpoint: string) => {
     try {
-      await invoke("set_docker_context", { endpoint });
-      setActiveConnection(endpoint);
-      setCustomPath(endpoint);
+      const formattedUri = await invoke<string>("set_docker_context", { endpoint });
+
+      setActiveConnection(formattedUri);
+      setCustomPath(formattedUri);
+
+      // Salva no disco
+      await saveSetting("docker.active-connection", formattedUri);
+      await saveSetting("docker.custom-path", formattedUri);
+
       queryClient.invalidateQueries();
     } catch (err) {
       alert(`Erro ao conectar: ${err}`);
@@ -42,16 +53,12 @@ export function useDockerContextActions() {
         return;
       }
 
-      const prefix = await getSystemPrefix();
+      setCustomPath(selected);
 
-      const uri = selected.startsWith(prefix) ? selected : `${prefix}${selected}`;
-
-      setCustomPath(uri);
-
-      // await applyContext(uri);
+      // Opcional: Se quiser conectar direto ao selecionar
+      // await applyContext(selected);
     } catch (err) {
       console.error("Erro ao abrir diálogo:", err);
-      alert("Não foi possível abrir o seletor de arquivos.");
     }
   };
 

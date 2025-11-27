@@ -1,78 +1,86 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
-import "./App.css";
+import { Switch, Match, Show, type ParentComponent } from "solid-js";
 import { useUIStore } from "./stores/ui-store";
-import { ServiceGuard } from "./features/system/components/service-guard";
+import { useSettingsStore } from "./stores/settings-store";
 import { Sidebar } from "./ui/sidebar";
-import { Match, type ParentComponent, Show, Switch } from "solid-js";
+import { SettingsPage } from "./features/settings";
+import { ServiceGuard } from "./features/system/components/service-guard";
+import { ContainerDetails } from "./features/containers/components/details";
 import { ContainerList } from "./features/containers/components/list/container-list";
 import { ImageList } from "./features/images/components/image-list";
 import { VolumeList } from "./features/volumes/components/volume-list";
-import { ContainerDetails } from "./features/containers/components/details";
 import { Footer } from "./ui/footer";
-import { useSettingsStore } from "./stores/settings-store";
-import { SettingsPage } from "./features/settings";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import "./App.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 
 function App() {
   const { activeView, selectedContainerId } = useUIStore();
   const { showSystemMonitor } = useSettingsStore();
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ServiceGuard>
-        <div class="flex h-screen w-screen bg-neutral-950 text-neutral-200 font-sans selection:bg-blue-500/30 overflow-hidden">
-          <Sidebar />
+      <div class="flex h-screen w-screen bg-neutral-950 text-neutral-200 font-sans selection:bg-blue-500/30 overflow-hidden">
+        {/* Sidebar está FORA do Guardião agora. Sempre acessível. */}
+        <Sidebar />
 
-          {/* 2. Área de Conteúdo */}
-          <main class="flex-1 flex flex-col min-w-0 bg-black/20">
-            <div class="flex-1 overflow-hidden relative">
-              <Switch>
-                <Match when={selectedContainerId()}>
-                  {/* Padding movido para cá para o scrollbar ficar na borda da tela se quiser */}
-                  <div class="h-full w-full p-6">
-                    <ContainerDetails />
-                  </div>
-                </Match>
+        <main class="flex-1 flex flex-col min-w-0 bg-black/20 relative">
+          <div class="flex-1 overflow-hidden relative">
+            <Switch>
+              {/* CASO 1: SETTINGS (Acessível mesmo Offline) */}
+              <Match when={activeView() === "settings"}>
+                <div class="h-full w-full overflow-y-auto custom-scrollbar p-8">
+                  <SettingsPage />
+                </div>
+              </Match>
 
-                <Match when={activeView() === "containers"}>
-                  <PageWrapper>
-                    <ContainerList />
-                  </PageWrapper>
-                </Match>
+              {/* CASO 2: FEATURES PROTEGIDAS (Precisam de Docker) */}
+              <Match when={["containers", "images", "volumes"].includes(activeView())}>
+                {/* O Guardião agora protege apenas esta área */}
+                <ServiceGuard>
+                  <Switch>
+                    <Match when={activeView() === "containers" && selectedContainerId()}>
+                      <div class="h-full w-full p-6">
+                        <ContainerDetails />
+                      </div>
+                    </Match>
 
-                <Match when={activeView() === "images"}>
-                  <PageWrapper>
-                    <ImageList />
-                  </PageWrapper>
-                </Match>
+                    <Match when={activeView() === "containers"}>
+                      <PageWrapper>
+                        <ContainerList />
+                      </PageWrapper>
+                    </Match>
 
-                <Match when={activeView() === "volumes"}>
-                  <PageWrapper>
-                    <VolumeList />
-                  </PageWrapper>
-                </Match>
+                    <Match when={activeView() === "images"}>
+                      <PageWrapper>
+                        <ImageList />
+                      </PageWrapper>
+                    </Match>
 
-                <Match when={activeView() === "settings"}>
-                  <div class="h-full w-full overflow-y-auto custom-scrollbar p-8">
-                    <SettingsPage />
-                  </div>
-                </Match>
-              </Switch>
-            </div>
-            <Show when={showSystemMonitor()}>
-              <Footer />
-            </Show>
-          </main>
-        </div>
-      </ServiceGuard>
+                    <Match when={activeView() === "volumes"}>
+                      <PageWrapper>
+                        <VolumeList />
+                      </PageWrapper>
+                    </Match>
+                  </Switch>
+                </ServiceGuard>
+              </Match>
+            </Switch>
+          </div>
+
+          <Show when={showSystemMonitor()}>
+            <Footer />
+          </Show>
+        </main>
+      </div>
     </QueryClientProvider>
   );
 }
