@@ -12,10 +12,13 @@ import { Footer } from "./ui/footer";
 
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
+import { useWindowPersistence } from "./hooks/use-window-persistence";
 
 function App() {
   const { activeView, selectedContainerId } = useUIStore();
   const { showSystemMonitor } = useSettingsStore();
+
+  useWindowPersistence();
 
   const queryClient = new QueryClient({
     defaultOptions: {
