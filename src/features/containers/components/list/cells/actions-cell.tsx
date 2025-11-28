@@ -1,7 +1,7 @@
 import { Play, Square, LoaderCircle, Trash2, EllipsisVertical } from "lucide-solid";
 import { createSignal, Show } from "solid-js";
-import { useContainerActions } from "../../../hooks/use-container-actions";
 import type { ContainerSummary } from "../../../types";
+import { useContainerActions } from "../../../hooks/use-container-actions";
 
 interface Props {
   container: ContainerSummary;
@@ -13,6 +13,8 @@ export function ActionsCell(props: Props) {
   const [localAction, setLocalAction] = createSignal<string | null>(null);
 
   const isRunning = props.container.State === "running";
+  const containerName =
+    props.container.Names[0]?.replace("/", "") || props.container.Id.substring(0, 12);
 
   const isLoading = () => {
     if (localAction()) return true;
@@ -21,8 +23,10 @@ export function ActionsCell(props: Props) {
     return false;
   };
 
-  const handleToggle = async () => {
+  const handleToggle = async (e: MouseEvent) => {
+    e.stopPropagation(); // Importante parar propagação aqui também
     if (isLoading()) return;
+
     const action = isRunning ? "stop" : "start";
     setLocalAction(action);
     try {
@@ -40,7 +44,9 @@ export function ActionsCell(props: Props) {
     e.preventDefault();
 
     if (isLoading()) return;
-    if (!confirm("Tem certeza?")) return;
+
+    const confirmed = confirm(`Tem certeza que deseja remover o container "${containerName}"?`);
+    if (!confirmed) return;
 
     setLocalAction("delete");
     try {
@@ -53,6 +59,7 @@ export function ActionsCell(props: Props) {
 
   return (
     <div class="flex items-center justify-end gap-2">
+      {/* Toggle Button */}
       <button
         type="button"
         onClick={handleToggle}
@@ -61,6 +68,7 @@ export function ActionsCell(props: Props) {
           p-2 rounded-lg transition-all border border-transparent disabled:opacity-50
           ${isRunning ? "text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10" : "text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10"}
         `}
+        title={isRunning ? "Parar" : "Iniciar"}
       >
         <Show when={!isLoading()} fallback={<LoaderCircle class="w-4 h-4 animate-spin" />}>
           <Show when={isRunning} fallback={<Play class="w-4 h-4 fill-current" />}>
@@ -69,11 +77,13 @@ export function ActionsCell(props: Props) {
         </Show>
       </button>
 
+      {/* Delete Button */}
       <button
         type="button"
         onClick={handleDelete}
         disabled={isLoading()}
         class="p-2 rounded-lg text-neutral-500 hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+        title="Remover"
       >
         <Show
           when={localAction() !== "delete"}
@@ -83,6 +93,7 @@ export function ActionsCell(props: Props) {
         </Show>
       </button>
 
+      {/* Menu Button */}
       <button
         type="button"
         class="p-2 hover:bg-neutral-800 rounded text-neutral-600 hover:text-white transition-colors"
