@@ -29,6 +29,7 @@ export const ImageItemRow: Component<Props> = (props) => {
     const confirmed = confirm(
       `Tem certeza que deseja remover a imagem "${mainTag()}"?\nIsso não pode ser desfeito.`,
     );
+
     if (!confirmed) return;
 
     setIsDeleting(true);

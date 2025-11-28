@@ -47,6 +47,7 @@ pub fn run() {
             commands::system::ping_docker,
             commands::images::list_images,
             commands::images::remove_image,
+            commands::images::pull_image,
             commands::volumes::list_volumes,
             commands::volumes::remove_volume,
             commands::container_logs::stream_container_logs,

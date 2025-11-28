@@ -9,6 +9,7 @@ import { ContainerList } from "./features/containers/components/list/container-l
 import { ImageList } from "./features/images/components/image-list";
 import { VolumeList } from "./features/volumes/components/volume-list";
 import { Footer } from "./ui/footer";
+import { Toaster } from "solid-toast";
 
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
@@ -31,6 +32,17 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: "#161b22",
+            color: "#fff",
+            border: "1px solid #333",
+          },
+        }}
+      />
+
       <div class="flex h-screen w-screen bg-neutral-950 text-neutral-200 font-sans selection:bg-blue-500/30 overflow-hidden">
         {/* Sidebar está FORA do Guardião agora. Sempre acessível. */}
         <Sidebar />

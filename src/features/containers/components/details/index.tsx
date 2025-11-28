@@ -53,7 +53,7 @@ export const ContainerDetails: Component = () => {
             </Suspense>
           </TabsContent>
 
-                    <TabsContent value="logs" class="h-full">
+          <TabsContent value="logs" class="h-full">
             <Suspense fallback={<p>Carregando logs...</p>}>
               <LogsTerminal containerId={containerId()} />
             </Suspense>

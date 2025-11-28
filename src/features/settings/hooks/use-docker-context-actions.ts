@@ -25,7 +25,7 @@ export function useDockerContextActions() {
     try {
       const savedConn = await getSetting<string>("docker.active-connection");
       const savedType = await getSetting<ConnectionType>("docker.connection-type");
-      const savedInput = await getSetting<string>("docker.custom-path-input");
+      // const savedInput = await getSetting<string>("docker.custom-path-input");
 
       // Se existe conexão salva, aplica no Rust e no Estado
       if (savedConn) {
@@ -37,7 +37,7 @@ export function useDockerContextActions() {
       }
 
       // Restaura o que estava escrito no input
-      if (savedInput) setCustomPath(savedInput);
+      // if (savedInput) setCustomPath(savedInput);
     } catch (e) {
       console.error("Erro ao carregar configurações:", e);
     }
@@ -54,7 +54,7 @@ export function useDockerContextActions() {
       // Atualiza Estado em Memória
       setActiveConnection(response.uri);
       setConnectionType(response.connection_type);
-      setCustomPath(response.uri); // Atualiza o input visual também
+      // setCustomPath(response.uri); // Atualiza o input visual também
 
       // Salva no Disco (Persistência)
       await saveSetting("docker.active-connection", response.uri);

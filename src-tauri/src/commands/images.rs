@@ -1,6 +1,7 @@
 use crate::services::docker::{self, DockerConfig};
-use bollard::query_parameters::{ListImagesOptions, RemoveImageOptions};
-use tauri::State;
+use bollard::query_parameters::{CreateImageOptions, ListImagesOptions, RemoveImageOptions};
+use futures_util::stream::StreamExt;
+use tauri::{AppHandle, Emitter, State};
 
 #[tauri::command]
 pub async fn list_images(
@@ -58,4 +59,45 @@ pub async fn remove_image(
         .await
         .map_err(|e| format!("Erro ao excluir imagem: {}", e))?;
     Ok(result)
+}
+
+#[tauri::command]
+pub async fn pull_image(
+    app: AppHandle,
+    state: State<'_, DockerConfig>,
+    image: String,
+) -> Result<(), String> {
+    let docker = docker::connect(&state)?;
+
+    let (img_name, tag) = if let Some((name, t)) = image.split_once(':') {
+        (name.to_string(), t.to_string())
+    } else {
+        (image.clone(), "latest".to_string())
+    };
+
+    let options = Some(CreateImageOptions {
+        from_image: Some(img_name),
+        tag: Some(tag),
+        ..Default::default()
+    });
+
+    let mut stream = docker.create_image(options, None, None);
+    let event_name = "pull-progress";
+
+    tauri::async_runtime::spawn(async move {
+        while let Some(msg) = stream.next().await {
+            match msg {
+                Ok(info) => {
+                    let _ = app.emit(event_name, info);
+                }
+                Err(e) => {
+                    let _ = app.emit("pull-error", e.to_string());
+                    break;
+                }
+            }
+        }
+        let _ = app.emit("pull-complete", ());
+    });
+
+    Ok(())
 }
