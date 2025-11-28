@@ -1,9 +1,10 @@
 import type { Component } from "solid-js";
 import { FolderOpen } from "lucide-solid";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
-import { DynamicList } from "../../../../ui/dynamic-list";
+import { DynamicList } from "../../../../ui/dynamic-list/dynamic-list";
 import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
+import { Button } from "../../../../ui/button";
 
 interface Props {
   mounts: RunConfig["mounts"];
@@ -40,13 +41,15 @@ export const MountsSection: Component<Props> = (props) => {
               value={item.hostPath}
               onInput={(e) => props.setForm("mounts", i, "hostPath", e.currentTarget.value)}
             />
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon" // Quadrado perfeito
+              class="h-7 w-7 text-neutral-400" // Um pouco menor que o input
               onClick={() => handleBrowse(i)}
-              class="absolute right-0 h-full px-2 bg-neutral-800 hover:bg-neutral-700 border-y border-r border-neutral-700 rounded-r text-neutral-400 hover:text-white"
+              title="Selecionar Pasta"
             >
-              <FolderOpen class="w-3 h-3" />
-            </button>
+              <FolderOpen class="w-4 h-4" />
+            </Button>
           </div>
           <input
             placeholder="No Container (/data)"

@@ -9,6 +9,7 @@ import { ContainerItemRow } from "./container-item-row";
 import { createDebouncedSignal } from "../../../../utils/debounce";
 import { SearchInput } from "../../../../ui/search-input";
 import { RunContainerModal } from "../run-container-modal";
+import { Button } from "../../../../ui/button";
 
 export function ContainerList() {
   const [isRunModalOpen, setIsRunModalOpen] = createSignal(false);
@@ -40,24 +41,26 @@ export function ContainerList() {
               placeholder="Buscar containers..."
             />
 
-            <button
-              type="button"
+            <Button
               onClick={() => setIsRunModalOpen(true)}
-              class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors shadow-lg shadow-blue-900/20"
+              size="sm" // Pequeno para caber no header
+              class="gap-2"
             >
-              <Play class="w-4 h-4 fill-current" />
+              <Play class="w-3.5 h-3.5 fill-current" />
               <span class="hidden sm:inline">Run</span>
-            </button>
+            </Button>
 
-            <button
-              type="button"
+            {/* Botão STOP (Destructive - Agora tem fundo vermelho suave) */}
+            <Button
+              variant="destructive"
+              size="sm"
               onClick={() => toggleDockerService("stop")}
               disabled={isToggling()}
-              class="flex items-center gap-2 text-xs font-bold text-red-400/80 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded transition-all border border-transparent hover:border-red-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="gap-2"
             >
               <Power class="w-3.5 h-3.5" />
               {pendingAction() === "stop" ? "Stopping..." : "Stop Engine"}
-            </button>
+            </Button>
 
             <div class="flex items-center gap-2 text-xs font-mono bg-neutral-900 px-3 py-1.5 rounded border border-neutral-800 text-neutral-400">
               <Show when={query.isFetching} fallback={<Zap class="w-3 h-3 text-emerald-500" />}>

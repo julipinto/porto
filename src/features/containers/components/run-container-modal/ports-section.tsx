@@ -1,5 +1,5 @@
 import type { Component } from "solid-js";
-import { DynamicList } from "../../../../ui/dynamic-list";
+import { DynamicList } from "../../../../ui/dynamic-list/dynamic-list";
 import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
 
