@@ -32,6 +32,9 @@ export const PullInput: Component<Props> = (props) => {
           <Box class="w-5 h-5" />
         </div>
       </div>
+      <p class="text-xs text-neutral-500 mt-2">
+        Se não informar a tag, será usado <strong>:latest</strong>.
+      </p>
     </div>
   );
 };
