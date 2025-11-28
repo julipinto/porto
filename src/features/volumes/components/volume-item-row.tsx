@@ -18,7 +18,10 @@ export const VolumeItemRow: Component<Props> = (props) => {
     return new Date(props.volume.CreatedAt).getTime() / 1000;
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (isDeleting()) return;
 
     const confirmed = confirm(

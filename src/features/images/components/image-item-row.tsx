@@ -23,10 +23,13 @@ export const ImageItemRow: Component<Props> = (props) => {
     return "<none>";
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (isDeleting()) return;
 
-    const confirmed = confirm(
+    const confirmed = await confirm(
       `Tem certeza que deseja remover a imagem "${mainTag()}"?\nIsso não pode ser desfeito.`,
     );
 

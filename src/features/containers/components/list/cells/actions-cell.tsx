@@ -35,7 +35,10 @@ export function ActionsCell(props: Props) {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (isLoading()) return;
     if (!confirm("Tem certeza?")) return;
 
