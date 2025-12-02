@@ -2,8 +2,8 @@ import { For, Show, type Component } from "solid-js";
 import { ExternalLink, ChevronDown } from "lucide-solid";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { ContainerSummary, PortInfo } from "../../../types";
-import { Popover, PopoverContent, PopoverTrigger } from "../../../../../ui/popover";
 import { Button } from "../../../../../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../../ui/popover";
 
 const MAX_VISIBLE_PORTS = 1;
 const PortButton: Component<{ port: PortInfo; onClick: () => void }> = (props) => (
