@@ -1,11 +1,13 @@
-import { type Component, For, Show } from "solid-js";
-import { Server, FolderOpen, Unplug, Check, Terminal } from "lucide-solid";
+import { type Component, createSignal, For, Show } from "solid-js";
+import { Server, FolderOpen, Unplug, Check, Terminal, Database, Trash2 } from "lucide-solid";
 import { useDockerContextActions } from "../hooks/use-docker-context-actions";
 import { useDockerContexts } from "../hooks/use-docker-context";
 import { Button } from "../../../ui/button";
+import { PruneModal } from "./prune-modal";
 
 export const AdvancedTab: Component = () => {
   const { contexts } = useDockerContexts();
+  const [showPrune, setShowPrune] = createSignal(false);
   const { activeConnection, browseSocketFile, applyContext, customPath, setCustomPath } =
     useDockerContextActions();
 
@@ -132,6 +134,36 @@ export const AdvancedTab: Component = () => {
           </Button>
         </div>
       </section>
+
+      {/* NOVA SEÇÃO: Manutenção */}
+      <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
+        <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
+          <Database class="w-4 h-4 text-amber-500" />
+          Manutenção do Sistema
+        </h3>
+
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-neutral-200 font-medium">Limpeza de Lixo (Prune)</p>
+            <p class="text-xs text-neutral-500 mt-1 max-w-md">
+              Remove containers parados, redes não usadas e imagens sem tag para liberar espaço em
+              disco.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => setShowPrune(true)}
+            class="border-red-900/30 hover:bg-red-900/10 text-red-400 hover:text-red-300 hover:border-red-900/50"
+          >
+            <Trash2 class="w-4 h-4 mr-2" />
+            Limpar Sistema
+          </Button>
+        </div>
+      </section>
+
+      {/* Modal de Prune */}
+      <PruneModal isOpen={showPrune()} onClose={() => setShowPrune(false)} />
     </div>
   );
 };

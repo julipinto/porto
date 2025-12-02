@@ -1,10 +1,8 @@
 import type { Component } from "solid-js";
-import { FolderOpen } from "lucide-solid";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { DynamicList } from "../../../../ui/dynamic-list/dynamic-list";
 import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
-import { Button } from "../../../../ui/button";
 import { MappingRow } from "./mapping-row";
 
 interface Props {
