@@ -14,6 +14,7 @@ import { Toaster } from "solid-toast";
 import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { useWindowPersistence } from "./hooks/use-window-persistence";
+import { NetworkList } from "./features/networks/components/network-list";
 
 function App() {
   const { activeView, selectedContainerId } = useUIStore();
@@ -61,7 +62,7 @@ function App() {
               </Match>
 
               {/* CASO 2: FEATURES PROTEGIDAS (Precisam de Docker) */}
-              <Match when={["containers", "images", "volumes"].includes(activeView())}>
+              <Match when={["containers", "images", "volumes", "networks"].includes(activeView())}>
                 {/* O Guardião agora protege apenas esta área */}
                 <ServiceGuard>
                   <Switch>
@@ -86,6 +87,12 @@ function App() {
                     <Match when={activeView() === "volumes"}>
                       <PageWrapper>
                         <VolumeList />
+                      </PageWrapper>
+                    </Match>
+
+                    <Match when={activeView() === "networks"}>
+                      <PageWrapper>
+                        <NetworkList />
                       </PageWrapper>
                     </Match>
                   </Switch>

@@ -11,8 +11,8 @@ export function StatusCell(props: { container: ContainerSummary }) {
           ${isRunning ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-neutral-600"}
         `}
       />
-      
-      <span 
+
+      <span
         class={`
           text-xs font-medium capitalize
           ${isRunning ? "text-emerald-400" : "text-neutral-500"}

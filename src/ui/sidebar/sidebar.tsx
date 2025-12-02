@@ -1,4 +1,4 @@
-import { Box, Layers, Database, Settings } from "lucide-solid";
+import { Box, Layers, Database, Settings, Network } from "lucide-solid";
 import type { Component } from "solid-js";
 import { useUIStore } from "../../stores/ui-store";
 
@@ -21,9 +21,7 @@ export const Sidebar: Component = () => {
     >
       <SidebarHeader isExpanded={isSidebarExpanded()} />
 
-      {/* Área de Navegação com padding mais refinado */}
       <nav class="flex-1 px-3 py-4 space-y-1">
-        {/* Label de Seção (Só aparece expandido) */}
         <div
           class={`px-3 mb-2 text-[10px] font-bold text-neutral-600 uppercase tracking-wider transition-opacity ${isSidebarExpanded() ? "opacity-100" : "opacity-0 h-0"}`}
         >
@@ -50,6 +48,13 @@ export const Sidebar: Component = () => {
           isActive={activeView() === "volumes"}
           isExpanded={isSidebarExpanded()}
           onClick={() => setActiveView("volumes")}
+        />
+        <SidebarItem
+          icon={Network}
+          label="Redes"
+          isActive={activeView() === "networks"}
+          isExpanded={isSidebarExpanded()}
+          onClick={() => setActiveView("networks")}
         />
       </nav>
 

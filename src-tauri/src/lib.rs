@@ -60,6 +60,8 @@ pub fn run() {
       commands::terminal::resize_terminal,
       commands::contexts::list_docker_contexts,
       commands::contexts::set_docker_context,
+      commands::networks::list_networks,
+      commands::networks::remove_network,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

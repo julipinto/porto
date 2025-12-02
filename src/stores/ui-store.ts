@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { createPersistentSignal } from "../utils/persistent";
 
-export type ViewType = "containers" | "images" | "volumes" | "settings";
+export type ViewType = "containers" | "images" | "volumes" | "settings" | "networks";
 
 const [isSidebarExpanded, setIsSidebarExpanded] = createPersistentSignal<boolean>(
   "sidebar-expanded",
