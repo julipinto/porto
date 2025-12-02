@@ -28,12 +28,14 @@ export function IdentityCell(props: Props) {
             variant="link"
             onClick={() => setSelectedContainerId(props.container.Id)}
             title={props.container.Names[0] || "Sem Nome"}
-            class="h-auto p-0 justify-start font-medium text-neutral-200 hover:text-blue-400 hover:no-underline truncate max-w-full"
+            class="font-medium text-sm text-neutral-200 hover:text-blue-400 truncate"
           >
             {name}
           </Button>
           <div class="flex items-center gap-1.5 mt-0.5">
-            <span class="text-[10px] text-neutral-500 font-mono select-all">{shortId}</span>
+            <span class="text-[10px] text-neutral-600 font-mono select-all uppercase tracking-wider">
+              {shortId}
+            </span>
           </div>
         </div>
       </div>

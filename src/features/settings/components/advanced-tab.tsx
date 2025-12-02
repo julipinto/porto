@@ -29,17 +29,17 @@ export const AdvancedTab: Component = () => {
               const isAppConnected = () => endpoint.trim() === activeConnection().trim();
 
               return (
-                <Button
+                <button
+                  type="button"
                   onClick={() => applyContext(endpoint)}
-                  variant="outline"
                   class={`
-    w-full h-auto p-3 justify-between items-center font-normal group
-    ${
-      isAppConnected()
-        ? "bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
-        : "bg-black/20 border-neutral-800 hover:bg-white/5 hover:border-neutral-700"
-    }
-  `}
+                    w-full flex items-center justify-between p-3 border rounded-lg transition-all text-left group relative
+                    ${
+                      isAppConnected()
+                        ? "bg-blue-500/10 border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                        : "bg-black/20 border-neutral-800 hover:bg-white/5 hover:border-neutral-700"
+                    }
+                  `}
                 >
                   <div class="flex items-center gap-3">
                     <div
@@ -81,7 +81,7 @@ export const AdvancedTab: Component = () => {
                       </div>
                     </Show>
                   </div>
-                </Button>
+                </button>
               );
             }}
           </For>

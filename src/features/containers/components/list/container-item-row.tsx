@@ -18,7 +18,7 @@ export function ContainerItemRow(props: Props) {
   const imageTag = () => props.container.Image.split(":")[1] || "latest";
 
   return (
-    <tr class="group hover:bg-neutral-800/40 transition-colors duration-150 border-b border-transparent hover:border-neutral-800">
+    <tr class="group hover:bg-white/[0.02] transition-colors border-b border-white/5 last:border-0">
       {/* Identidade */}
       <td class="p-4 align-top">
         <IdentityCell container={props.container} isNested={props.isNested} />

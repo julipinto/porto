@@ -4,19 +4,14 @@ export function StatusCell(props: { container: ContainerSummary }) {
   const isRunning = props.container.State === "running";
 
   return (
-    <div
-      class={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-        isRunning
-          ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-          : "bg-neutral-800/50 text-neutral-400 border-neutral-700/50"
-      }`}
-    >
+    <div class="flex items-center gap-2">
       <div
-        class={`w-1.5 h-1.5 rounded-full ${
-          isRunning ? "bg-emerald-400 animate-pulse" : "bg-neutral-500"
-        }`}
+        class={`w-2 h-2 rounded-full ${isRunning ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-neutral-600"}`}
       />
-      {props.container.State}
+
+      <span class={`text-xs font-medium ${isRunning ? "text-emerald-400" : "text-neutral-500"}`}>
+        {props.container.State} {/* ou capitalize() se quiser "Running" */}
+      </span>
     </div>
   );
 }
