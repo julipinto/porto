@@ -4,10 +4,12 @@ import { useVolumes } from "../hooks/use-volumes";
 import { VolumeItemRow } from "./volume-item-row";
 import { createDebouncedSignal } from "../../../utils/debounce";
 import { SearchInput } from "../../../ui/search-input";
+import { useUIStore } from "../../../stores/ui-store";
 
 export function VolumeList() {
   // 1. Busca
   const [inputValue, setInputValue, searchQuery] = createDebouncedSignal("", 300);
+  const { setSelectedVolumeName } = useUIStore();
   const query = useVolumes(searchQuery);
 
   return (
@@ -50,7 +52,11 @@ export function VolumeList() {
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-800/50 text-sm">
-            <For each={query.data}>{(vol) => <VolumeItemRow volume={vol} />}</For>
+            <For each={query.data}>
+              {(vol) => (
+                <VolumeItemRow volume={vol} onInspect={() => setSelectedVolumeName(vol.Name)} />
+              )}
+            </For>
 
             <Show when={query.data?.length === 0}>
               <tr>

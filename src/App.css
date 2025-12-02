@@ -28,7 +28,8 @@ body {
   background: #404040; /* neutral-700 */
 }
 
-input, textarea {
+input,
+textarea {
   user-select: text;
   -webkit-user-select: text;
   cursor: text;

@@ -7,6 +7,7 @@ import { Button } from "../../../ui/button";
 
 interface Props {
   volume: Volume;
+  onInspect: () => void;
 }
 
 export const VolumeItemRow: Component<Props> = (props) => {
@@ -49,9 +50,14 @@ export const VolumeItemRow: Component<Props> = (props) => {
           </div>
 
           <div class="flex flex-col min-w-0">
-            <div class="font-medium text-neutral-200 truncate max-w-xs" title={props.volume.Name}>
+            <Button
+              variant="link"
+              onClick={props.onInspect}
+              class="font-medium text-neutral-200 truncate max-w-xs text-left hover:text-blue-400 hover:underline decoration-blue-500/50 decoration-2 underline-offset-2 transition-colors"
+              title="Inspecionar Volume"
+            >
               {props.volume.Name}
-            </div>
+            </Button>
             <div class="flex items-center gap-2 mt-1">
               <span class="text-[10px] uppercase tracking-wider text-neutral-500 font-mono bg-neutral-950 px-1.5 py-0.5 rounded border border-neutral-800">
                 {props.volume.Driver}

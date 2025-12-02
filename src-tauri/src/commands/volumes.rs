@@ -1,6 +1,6 @@
 use crate::services::docker::{self, DockerConfig};
-use bollard::models::Volume;
-use bollard::query_parameters::{ListVolumesOptions, RemoveVolumeOptions};
+use bollard::models::{ContainerSummary, Volume};
+use bollard::query_parameters::{ListContainersOptions, ListVolumesOptions, RemoveVolumeOptions};
 use tauri::State;
 
 #[tauri::command]
@@ -45,4 +45,52 @@ pub async fn remove_volume(state: State<'_, DockerConfig>, name: String) -> Resu
     .map_err(|e| format!("Erro ao remover volume: {}", e))?;
 
   Ok(())
+}
+
+#[derive(serde::Serialize)]
+pub struct VolumeDetails {
+  pub base: Volume,
+  pub used_by: Vec<ContainerSummary>, // Lista de containers conectados
+}
+
+#[tauri::command]
+pub async fn inspect_volume(
+  state: State<'_, DockerConfig>,
+  name: String,
+) -> Result<VolumeDetails, String> {
+  let docker = crate::services::docker::connect(&state)?;
+
+  // 1. Busca dados do volume
+  let volume = docker
+    .inspect_volume(&name)
+    .await
+    .map_err(|e| format!("Erro ao inspecionar volume: {}", e))?;
+
+  // 2. Busca todos os containers para cruzar dados
+  let options = Some(ListContainersOptions {
+    all: true,
+    ..Default::default()
+  });
+
+  let all_containers = docker
+    .list_containers(options)
+    .await
+    .map_err(|e| format!("Erro ao listar containers: {}", e))?;
+
+  // 3. Filtra: Quem está usando este volume?
+  let used_by: Vec<ContainerSummary> = all_containers
+    .into_iter()
+    .filter(|c| {
+      c.mounts.as_ref().is_some_and(|mounts| {
+        mounts
+          .iter()
+          .any(|m| m.name.as_deref() == Some(&name) || m.source.as_deref() == Some(&name))
+      })
+    })
+    .collect();
+
+  Ok(VolumeDetails {
+    base: volume,
+    used_by,
+  })
 }

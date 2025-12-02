@@ -52,6 +52,7 @@ pub fn run() {
       commands::images::pull_image,
       commands::volumes::list_volumes,
       commands::volumes::remove_volume,
+      commands::volumes::inspect_volume,
       commands::container_logs::stream_container_logs,
       commands::container_stats::stream_container_stats,
       commands::monitor::get_host_stats,

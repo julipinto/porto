@@ -15,9 +15,10 @@ import "./App.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { useWindowPersistence } from "./hooks/use-window-persistence";
 import { NetworkList } from "./features/networks/components/network-list";
+import { VolumeDetailsPage } from "./features/volumes/components/details";
 
 function App() {
-  const { activeView, selectedContainerId } = useUIStore();
+  const { activeView, selectedContainerId, selectedVolumeName } = useUIStore();
   const { showSystemMonitor } = useSettingsStore();
 
   useWindowPersistence();
@@ -85,9 +86,18 @@ function App() {
                     </Match>
 
                     <Match when={activeView() === "volumes"}>
-                      <PageWrapper>
-                        <VolumeList />
-                      </PageWrapper>
+                      <Show
+                        when={selectedVolumeName()}
+                        fallback={
+                          <PageWrapper>
+                            <VolumeList />
+                          </PageWrapper>
+                        }
+                      >
+                        <div class="h-full w-full p-6">
+                          <VolumeDetailsPage />
+                        </div>
+                      </Show>
                     </Match>
 
                     <Match when={activeView() === "networks"}>

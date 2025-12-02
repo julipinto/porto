@@ -14,6 +14,7 @@ const [activeView, setViewSignal] = createPersistentSignal<ViewType>(
 );
 
 const [selectedContainerId, setSelectedContainerId] = createSignal<string | null>(null);
+const [selectedVolumeName, setSelectedVolumeName] = createSignal<string | null>(null);
 
 export const useUIStore = () => {
   return {
@@ -24,8 +25,11 @@ export const useUIStore = () => {
       console.log(view);
       setViewSignal(view);
       setSelectedContainerId(null);
+      setSelectedVolumeName(null);
     },
     selectedContainerId,
     setSelectedContainerId,
+    selectedVolumeName,
+    setSelectedVolumeName,
   };
 };
