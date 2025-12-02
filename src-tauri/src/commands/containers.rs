@@ -1,6 +1,9 @@
 use crate::services::docker::{self, DockerConfig};
 
-use bollard::models::{ContainerCreateBody, ContainerInspectResponse, HostConfig, PortBinding};
+use bollard::models::{
+  ContainerCreateBody, ContainerInspectResponse, EndpointSettings, HostConfig, NetworkingConfig,
+  PortBinding,
+};
 use bollard::query_parameters::{
   CreateContainerOptions, InspectContainerOptions, ListContainersOptions, RemoveContainerOptions,
   StartContainerOptions, StopContainerOptions,
@@ -158,6 +161,7 @@ pub struct RunContainerConfig {
   ports: Vec<(String, String)>,
   env: Vec<(String, String)>,
   mounts: Vec<(String, String)>,
+  network_id: Option<String>,
 }
 
 #[tauri::command]
@@ -167,14 +171,13 @@ pub async fn create_and_start_container(
 ) -> Result<String, String> {
   let docker = docker::connect(&state)?;
 
+  // 1. Configurar Portas
   let mut port_bindings = HashMap::new();
   let mut exposed_ports = HashMap::new();
 
   for (host_port, container_port) in config.ports {
     let container_key = format!("{}/tcp", container_port);
-    // Exposed Ports usa um HashMap vazio como valor para indicar "existe"
     exposed_ports.insert(container_key.clone(), HashMap::new());
-
     port_bindings.insert(
       container_key,
       Some(vec![PortBinding {
@@ -184,32 +187,51 @@ pub async fn create_and_start_container(
     );
   }
 
+  // 2. Env Vars
   let envs: Vec<String> = config
     .env
     .iter()
     .map(|(k, v)| format!("{}={}", k, v))
     .collect();
 
+  // 3. Binds (Volumes)
   let binds: Vec<String> = config
     .mounts
     .iter()
-    .map(|(host_path, container_path)| format!("{}:{}", host_path, container_path))
+    .map(|(host, cont)| format!("{}:{}", host, cont))
     .collect();
 
+  // 4. Configuração de REDE (Nova Lógica)
+  let networking_config = if let Some(net_id) = config.network_id.filter(|n| !n.is_empty()) {
+    let mut endpoints = HashMap::new();
+    endpoints.insert(net_id, EndpointSettings::default());
+
+    Some(NetworkingConfig {
+      // CORREÇÃO AQUI: Embrulhar 'endpoints' em Some()
+      endpoints_config: Some(endpoints),
+    })
+  } else {
+    None
+  };
+
+  // 5. Host Config
   let host_config = HostConfig {
     port_bindings: Some(port_bindings),
     binds: Some(binds),
     ..Default::default()
   };
 
+  // 6. Container Body Principal
   let container_config = ContainerCreateBody {
     image: Some(config.image),
     exposed_ports: Some(exposed_ports),
     env: Some(envs),
     host_config: Some(host_config),
+    networking_config, // <--- Injetamos a rede aqui
     ..Default::default()
   };
 
+  // 7. Opções (Nome)
   let options = config
     .name
     .filter(|n| !n.is_empty())
@@ -218,20 +240,29 @@ pub async fn create_and_start_container(
       ..Default::default()
     });
 
+  // 8. Criar
   let create_res = docker
     .create_container(options, container_config)
     .await
     .map_err(|e| format!("Erro ao criar: {}", e))?;
 
-  docker
+  // 9. Iniciar com ROLLBACK (Segurança)
+  if let Err(start_err) = docker
     .start_container(&create_res.id, None::<StartContainerOptions>)
     .await
-    .map_err(|e| {
-      format!(
-        "Container criado ({}), mas falhou ao iniciar: {}",
-        create_res.id, e
-      )
-    })?;
+  {
+    // Se falhar o start (ex: porta ocupada), deletamos o container para não deixar lixo
+    let remove_opts = Some(RemoveContainerOptions {
+      force: true,
+      ..Default::default()
+    });
+    let _ = docker.remove_container(&create_res.id, remove_opts).await;
+
+    return Err(format!(
+      "Falha ao iniciar (Rollback executado): {}",
+      start_err
+    ));
+  }
 
   Ok(create_res.id)
 }

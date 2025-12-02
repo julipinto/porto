@@ -12,20 +12,36 @@ import { Portal } from "solid-js/web";
 
 interface PopoverContextValue {
   isOpen: Accessor<boolean>;
-  setIsOpen: Setter<boolean>;
+  setIsOpen: (value: boolean) => void;
   triggerRef: Accessor<HTMLElement | undefined>;
   setTriggerRef: Setter<HTMLElement | undefined>;
 }
 
 const PopoverContext = createContext<PopoverContextValue>();
 
-export const Popover: ParentComponent = (props) => {
-  const [isOpen, setIsOpen] = createSignal(false);
+interface PopoverProps {
+  isOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
+export const Popover: ParentComponent<PopoverProps> = (rawProps) => {
+  const onOpenChange = rawProps.onOpenChange ?? (() => {});
+
+  const [internalIsOpen, setInternalIsOpen] = createSignal(false);
   const [triggerRef, setTriggerRef] = createSignal<HTMLElement>();
 
+  const isOpen = () => (rawProps.isOpen !== undefined ? rawProps.isOpen : internalIsOpen());
+
+  const setIsOpen = (value: boolean) => {
+    onOpenChange(value);
+
+    if (rawProps.isOpen === undefined) {
+      setInternalIsOpen(value);
+    }
+  };
   return (
     <PopoverContext.Provider value={{ isOpen, setIsOpen, triggerRef, setTriggerRef }}>
-      <div class="relative inline-block">{props.children}</div>
+      <div class="relative inline-block">{rawProps.children}</div>
     </PopoverContext.Provider>
   );
 };

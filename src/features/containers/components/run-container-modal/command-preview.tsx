@@ -9,17 +9,27 @@ interface Props {
 export const CommandPreview: Component<Props> = (props) => {
   const command = createMemo(() => {
     const parts = ["docker run", "-d"];
+
     if (props.form.name) parts.push(`--name ${props.form.name}`);
+
     props.form.ports.forEach((p) => {
       if (p.host && p.container) parts.push(`-p ${p.host}:${p.container}`);
     });
+
     props.form.env.forEach((e) => {
       if (e.key) parts.push(`-e ${e.key}=${e.value}`);
     });
+
     props.form.mounts.forEach((m) => {
       if (m.hostPath && m.containerPath) parts.push(`-v ${m.hostPath}:${m.containerPath}`);
     });
+
+    if (props.form.networkId) {
+      parts.push(`--network ${props.form.networkId}`);
+    }
+
     parts.push(props.form.image || "<imagem>");
+
     return parts.join(" ");
   });
 

@@ -22,6 +22,7 @@ export interface RunConfig {
   ports: PortMapping[];
   env: EnvVar[];
   mounts: VolumeMount[];
+  networkId: string;
 }
 
 export function useRunContainer() {

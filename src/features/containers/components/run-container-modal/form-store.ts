@@ -7,6 +7,7 @@ const initialState: RunConfig = {
   ports: [],
   env: [],
   mounts: [],
+  networkId: "",
 };
 
 type ArrayKeys = {
