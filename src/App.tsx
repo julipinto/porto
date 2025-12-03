@@ -17,9 +17,16 @@ import { useWindowPersistence } from "./hooks/use-window-persistence";
 import { NetworkList } from "./features/networks/components/network-list";
 import { VolumeDetailsPage } from "./features/volumes/components/details";
 import { ImageDetailsPage } from "./features/images/components/details";
+import { NetworkDetailsPage } from "./features/networks/components/details/details";
 
 function App() {
-  const { activeView, selectedContainerId, selectedVolumeName, selectedImageId } = useUIStore();
+  const {
+    activeView,
+    selectedContainerId,
+    selectedVolumeName,
+    selectedImageId,
+    selectedNetworkId,
+  } = useUIStore();
   const { showSystemMonitor } = useSettingsStore();
 
   useWindowPersistence();
@@ -111,9 +118,18 @@ function App() {
                     </Match>
 
                     <Match when={activeView() === "networks"}>
-                      <PageWrapper>
-                        <NetworkList />
-                      </PageWrapper>
+                      <Show
+                        when={selectedNetworkId()}
+                        fallback={
+                          <PageWrapper>
+                            <NetworkList />
+                          </PageWrapper>
+                        }
+                      >
+                        <div class="h-full w-full p-6">
+                          <NetworkDetailsPage />
+                        </div>
+                      </Show>
                     </Match>
                   </Switch>
                 </ServiceGuard>

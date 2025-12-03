@@ -1,6 +1,6 @@
 use crate::services::docker::{self, DockerConfig};
 use bollard::models::Network;
-use bollard::query_parameters::ListNetworksOptions;
+use bollard::query_parameters::{InspectNetworkOptions, ListNetworksOptions};
 use tauri::State;
 
 #[tauri::command]
@@ -55,4 +55,21 @@ pub async fn remove_network(state: State<'_, DockerConfig>, id: String) -> Resul
     .map_err(|e| format!("Erro ao remover rede: {}", e))?;
 
   Ok(())
+}
+
+#[tauri::command]
+pub async fn inspect_network(
+  state: State<'_, DockerConfig>,
+  id: String,
+) -> Result<Network, String> {
+  let docker = crate::services::docker::connect(&state)?;
+
+  let options = Some(InspectNetworkOptions::default());
+
+  let network = docker
+    .inspect_network(&id, options)
+    .await
+    .map_err(|e| format!("Erro ao inspecionar rede: {}", e))?;
+
+  Ok(network)
 }

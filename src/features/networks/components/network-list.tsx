@@ -6,6 +6,7 @@ import { createDebouncedSignal } from "../../../utils/debounce";
 import { SearchInput } from "../../../ui/search-input";
 
 export function NetworkList() {
+  console.log("Rendering NetworkList");
   const [inputValue, setInputValue, searchQuery] = createDebouncedSignal("", 300);
   const query = useNetworks(searchQuery);
 

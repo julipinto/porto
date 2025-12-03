@@ -74,6 +74,7 @@ pub fn run() {
       // Network Commands
       commands::networks::list_networks,
       commands::networks::remove_network,
+      commands::networks::inspect_network,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

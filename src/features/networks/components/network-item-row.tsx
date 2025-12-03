@@ -4,12 +4,14 @@ import type { Network } from "../types";
 import { useNetworkActions } from "../hooks/use-network-actions";
 import { formatTimeAgo } from "../../../utils/format";
 import { Button } from "../../../ui/button";
+import { useUIStore } from "../../../stores/ui-store";
 
 interface Props {
   network: Network;
 }
 
 export const NetworkItemRow: Component<Props> = (props) => {
+  const { setSelectedNetworkId } = useUIStore();
   const { removeNetwork } = useNetworkActions();
   const [isDeleting, setIsDeleting] = createSignal(false);
 
@@ -43,9 +45,14 @@ export const NetworkItemRow: Component<Props> = (props) => {
           </div>
 
           <div class="flex flex-col min-w-0">
-            <div class="font-medium text-sm text-neutral-200 truncate" title={props.network.Name}>
+            <Button
+              variant="link"
+              onClick={() => setSelectedNetworkId(props.network.Id)}
+              class="h-auto p-0 justify-start font-medium text-sm text-neutral-200 hover:text-blue-400 hover:no-underline truncate max-w-xs"
+              title={props.network.Name}
+            >
               {props.network.Name}
-            </div>
+            </Button>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span class="text-[10px] text-neutral-600 font-mono select-all uppercase tracking-wide">
                 {shortId}

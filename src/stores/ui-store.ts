@@ -24,6 +24,7 @@ const [selectedContainerId, setSelectedContainerId] = createSignal<string | null
 const [selectedVolumeName, setSelectedVolumeName] = createSignal<string | null>(null);
 const [selectedImageId, setSelectedImageId] = createSignal<string | null>(null);
 const [runImagePreset, setRunImagePreset] = createSignal<string | null>(null);
+const [selectedNetworkId, setSelectedNetworkId] = createSignal<string | null>(null);
 
 export const useUIStore = () => {
   const persistView = (view: ViewType) => {
@@ -48,11 +49,15 @@ export const useUIStore = () => {
     runImagePreset,
     setRunImagePreset,
 
+    selectedNetworkId,
+    setSelectedNetworkId,
+
     setActiveView: (view: ViewType) => {
       persistView(view);
       setSelectedContainerId(null);
       setSelectedVolumeName(null);
       setSelectedImageId(null);
+      setSelectedNetworkId(null);
       setRunImagePreset(null);
     },
 
@@ -62,6 +67,7 @@ export const useUIStore = () => {
       setSelectedContainerId(null);
       setSelectedVolumeName(null);
       setSelectedImageId(null);
+      setSelectedNetworkId(null);
     },
   };
 };
