@@ -3,6 +3,7 @@ import { Show } from "solid-js";
 import { useUIStore } from "../../../stores/ui-store";
 import { useDockerContextActions } from "../../settings/hooks/use-docker-context-actions";
 import { Button } from "../../../ui/button";
+import { useI18n } from "../../../i18n";
 
 interface Props {
   onTurnOn: () => void;
@@ -12,6 +13,7 @@ interface Props {
 export function DockerOffScreen(props: Props) {
   const { setActiveView } = useUIStore();
   const { activeConnection, connectionType } = useDockerContextActions();
+  const { t } = useI18n();
 
   const isLoading = () => props.pendingAction === "start";
   const canTryAutoStart = () => connectionType() === "local";
@@ -32,15 +34,15 @@ export function DockerOffScreen(props: Props) {
         </div>
 
         {/* Título e Subtítulo */}
-        <h2 class="text-xl font-bold text-white tracking-tight mb-2">Conexão Indisponível</h2>
+        <h2 class="text-xl font-bold text-white tracking-tight mb-2">
+          {t("system.dockerOff.title")}
+        </h2>
 
         <p class="text-neutral-400 text-sm text-center mb-6 leading-relaxed">
-          Não foi possível estabelecer comunicação com o Docker Engine.
+          {t("system.dockerOff.description")}
           <Show when={connectionType() === "remote"}>
             <br />
-            <span class="text-amber-500/90 mt-1 block">
-              Verifique sua VPN ou status do servidor remoto.
-            </span>
+            <span class="text-amber-500/90 mt-1 block">{t("system.dockerOff.remoteWarning")}</span>
           </Show>
         </p>
 
@@ -56,7 +58,9 @@ export function DockerOffScreen(props: Props) {
           </div>
           <div class="flex flex-col min-w-0 text-left">
             <span class="text-[10px] font-bold uppercase text-neutral-500 tracking-wider">
-              {connectionType() === "remote" ? "Endpoint Remoto" : "Socket Local"}
+              {connectionType() === "remote"
+                ? t("system.dockerOff.endpointRemote")
+                : t("system.dockerOff.socketLocal")}
             </span>
             <code class="text-xs text-neutral-300 font-mono truncate" title={activeConnection()}>
               {activeConnection()}
@@ -77,7 +81,9 @@ export function DockerOffScreen(props: Props) {
               <Show when={isLoading()} fallback={<Power class="w-4 h-4" />}>
                 <Activity class="w-4 h-4 animate-spin" />
               </Show>
-              {isLoading() ? "Tentando iniciar..." : "Iniciar Serviço Local"}
+              {isLoading()
+                ? t("system.dockerOff.tryingToStart")
+                : t("system.dockerOff.startService")}
             </Button>
           </Show>
 
@@ -88,7 +94,7 @@ export function DockerOffScreen(props: Props) {
             class="w-full bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700 hover:text-white"
           >
             <Settings class="w-4 h-4" />
-            Gerenciar Conexões
+            {t("system.dockerOff.manageConnections")}
           </Button>
         </div>
       </div>

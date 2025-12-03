@@ -1,6 +1,7 @@
 import { For, type JSX } from "solid-js";
 import { Plus, Trash2 } from "lucide-solid";
 import { Button } from "../button";
+import { useI18n } from "../../i18n";
 
 interface Props<T> {
   items: T[];
@@ -12,6 +13,7 @@ interface Props<T> {
 }
 
 export function DynamicList<T>(props: Props<T>) {
+  const { t } = useI18n();
   return (
     <div class="space-y-2">
       <div class="flex justify-between items-center">
@@ -25,7 +27,7 @@ export function DynamicList<T>(props: Props<T>) {
           onClick={props.onAdd}
           class="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 h-auto py-1"
         >
-          <Plus class="w-3 h-3" /> Adicionar
+          <Plus class="w-3 h-3" /> {t("global.common.add")}
         </Button>
       </div>
 
@@ -34,7 +36,7 @@ export function DynamicList<T>(props: Props<T>) {
           each={props.items}
           fallback={
             <div class="text-xs text-neutral-600 italic py-2">
-              {props.emptyText || "Nenhum item configurado."}
+              {props.emptyText || t("global.common.noItems")}
             </div>
           }
         >

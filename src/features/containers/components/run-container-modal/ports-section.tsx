@@ -3,6 +3,7 @@ import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
 import { MappingRow } from "./mapping-row"; // <--- Importe
 import { DynamicList } from "../../../../ui/dynamic-list";
+import { useI18n } from "../../../../i18n";
 
 interface Props {
   ports: RunConfig["ports"];
@@ -12,13 +13,14 @@ interface Props {
 }
 
 export const PortsSection: Component<Props> = (props) => {
+  const { t } = useI18n();
   return (
     <DynamicList
-      label="Mapeamento de Portas"
+      label={t("containers.runModal.sections.portMapping")}
       items={props.ports}
       onAdd={props.onAdd}
       onRemove={props.onRemove}
-      emptyText="Nenhuma porta exposta."
+      emptyText={t("containers.runModal.sections.noPorts")}
       renderItem={(item, i) => (
         <MappingRow
           type="port"

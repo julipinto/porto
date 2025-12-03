@@ -1,6 +1,7 @@
 import type { Component } from "solid-js";
 import { Monitor, Globe } from "lucide-solid";
 import { useSettingsStore, LANGUAGES, type Language } from "../../../stores/settings-store";
+import { useI18n } from "../../../i18n";
 
 // UI Components
 import { Switch } from "../../../ui/switch";
@@ -8,6 +9,7 @@ import { Select } from "../../../ui/select";
 
 export const GeneralTab: Component = () => {
   const { showSystemMonitor, setShowSystemMonitor, language, setLanguage } = useSettingsStore();
+  const { t } = useI18n();
 
   // Prepara as opções do Select
   const languageOptions = Object.entries(LANGUAGES).map(([value, label]) => ({
@@ -21,12 +23,12 @@ export const GeneralTab: Component = () => {
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
           <Globe class="w-4 h-4 text-blue-500" />
-          Idioma e Região
+          {t("settings.general.language.title")}
         </h3>
 
         <div class="divide-y divide-neutral-800/50">
           <Select
-            label="Idioma da Interface"
+            label={t("settings.general.language.interfaceLanguage")}
             value={language()}
             onChange={(v) => setLanguage(v as Language)}
             options={languageOptions}
@@ -38,13 +40,13 @@ export const GeneralTab: Component = () => {
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
           <Monitor class="w-4 h-4 text-purple-500" />
-          Interface & Aparência
+          {t("settings.general.interface.title")}
         </h3>
 
         <div class="divide-y divide-neutral-800/50">
           <Switch
-            label="Monitoramento de Sistema"
-            description="Exibir barra de CPU e RAM no rodapé da aplicação."
+            label={t("settings.general.interface.systemMonitor")}
+            description={t("settings.general.interface.systemMonitorDescription")}
             checked={showSystemMonitor()}
             onChange={setShowSystemMonitor}
           />

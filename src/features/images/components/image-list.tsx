@@ -7,12 +7,14 @@ import { SearchInput } from "../../../ui/search-input";
 import { PullImageModal } from "./pull-modal";
 import { Button } from "../../../ui/button";
 import { RunContainerModal } from "../../containers/components/run-container-modal";
+import { useI18n } from "../../../i18n";
 
 export function ImageList() {
   // 1. Configura o estado da busca com debounce
   const [isPullModalOpen, setIsPullModalOpen] = createSignal(false);
   const [inputValue, setInputValue, searchQuery] = createDebouncedSignal("", 300);
   const [imageToRun, setImageToRun] = createSignal<string | null>(null);
+  const { t } = useI18n();
   // 2. Passa o sinal de busca para o hook
   const query = useImages(searchQuery);
 
@@ -31,9 +33,9 @@ export function ImageList() {
         {/* Header */}
         <div class="flex justify-between items-end border-b border-neutral-800 pb-4 gap-4">
           <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">Imagens Locais</h2>
+            <h2 class="text-2xl font-bold text-white tracking-tight">{t("images.list.title")}</h2>
             <p class="text-neutral-500 text-sm mt-1">
-              {query.data?.length || 0} imagens armazenadas
+              {t("images.list.subtitle", { count: query.data?.length || 0 })}
             </p>
           </div>
 
@@ -42,12 +44,12 @@ export function ImageList() {
             <SearchInput
               value={inputValue()}
               onInput={setInputValue}
-              placeholder="Buscar imagem por tag ou ID..."
+              placeholder={t("images.list.searchPlaceholder")}
             />
 
             <Button onClick={() => setIsPullModalOpen(true)} class="shadow-lg shadow-blue-900/20">
               <Download class="w-4 h-4" />
-              <span class="hidden sm:inline">Pull Image</span>
+              <span class="hidden sm:inline">{t("images.list.pullImage")}</span>
             </Button>
 
             {/* Status Pill */}
@@ -55,7 +57,9 @@ export function ImageList() {
               <Show when={query.isFetching} fallback={<Zap class="w-3 h-3 text-emerald-500" />}>
                 <RefreshCw class="w-3 h-3 animate-spin text-blue-500" />
               </Show>
-              <span>{query.isFetching ? "SYNCING" : "ONLINE"}</span>
+              <span>
+                {query.isFetching ? t("global.common.syncing") : t("global.common.online")}
+              </span>
             </div>
           </div>
         </div>
@@ -65,11 +69,11 @@ export function ImageList() {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="bg-neutral-900 border-b border-neutral-800 text-xs uppercase tracking-wider text-neutral-500 font-semibold">
-                <th class="p-4 w-[35%]">Tag / Repositório</th>
-                <th class="p-4 w-[15%]">ID</th>
-                <th class="p-4 w-[15%]">Tamanho</th>
-                <th class="p-4 w-[20%]">Criado em</th>
-                <th class="p-4 text-right w-[15%]">Ações</th>
+                <th class="p-4 w-[35%]">{t("images.list.tableHeaders.tagRepo")}</th>
+                <th class="p-4 w-[15%]">{t("images.list.tableHeaders.id")}</th>
+                <th class="p-4 w-[15%]">{t("images.list.tableHeaders.size")}</th>
+                <th class="p-4 w-[20%]">{t("images.list.tableHeaders.createdAt")}</th>
+                <th class="p-4 text-right w-[15%]">{t("images.list.tableHeaders.actions")}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-neutral-800/50 text-sm">

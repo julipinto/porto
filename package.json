@@ -18,6 +18,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@solid-primitives/i18n": "^2.2.1",
     "@tanstack/solid-query": "^5.90.13",
     "@tauri-apps/api": "^2.9.0",
     "@tauri-apps/plugin-dialog": "~2",

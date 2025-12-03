@@ -14,6 +14,7 @@ import { Button } from "../../../../ui/button";
 import { Modal } from "../../../../ui/modal";
 import { useNetworks } from "../../../networks/hooks/use-networks";
 import { Select } from "../../../../ui/select";
+import { useI18n } from "../../../../i18n";
 
 interface Props {
   isOpen: boolean;
@@ -23,6 +24,7 @@ interface Props {
 
 export const RunContainerModal: Component<Props> = (props) => {
   const { runContainer } = useRunContainer();
+  const { t } = useI18n();
   const [isRunning, setIsRunning] = createSignal(false);
   const [showAdvanced, setShowAdvanced] = createSignal(false);
 
@@ -44,7 +46,7 @@ export const RunContainerModal: Component<Props> = (props) => {
     setIsRunning(true);
     try {
       await runContainer(form);
-      toast.success(`Container iniciado com sucesso!`);
+      toast.success(t("containers.runModal.success"));
       props.onClose();
       reset();
     } catch (e) {
@@ -59,14 +61,14 @@ export const RunContainerModal: Component<Props> = (props) => {
     const list = networksQuery.data || [];
     // Adiciona opção padrão (Bridge/Default) se quiser ser explícito, ou deixa vazio
     const options = list.map((n) => ({ value: n.Name, label: n.Name }));
-    return [{ value: "", label: "Padrão (Bridge)" }, ...options];
+    return [{ value: "", label: t("containers.runModal.sections.networkDefault") }, ...options];
   });
 
   return (
     <Modal
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Rodar Novo Container"
+      title={t("containers.runModal.title")}
       maxWidth="max-w-2xl"
       footer={
         <div class="flex justify-between w-full items-center">
@@ -78,11 +80,13 @@ export const RunContainerModal: Component<Props> = (props) => {
             class="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 h-auto py-1 px-2"
           >
             {showAdvanced() ? <ChevronUp class="w-3 h-3" /> : <ChevronDown class="w-3 h-3" />}
-            {showAdvanced() ? "Menos opções" : "Opções avançadas"}
+            {showAdvanced()
+              ? t("containers.runModal.lessOptions")
+              : t("containers.runModal.advancedOptions")}
           </Button>
           <div class="flex gap-2">
             <Button variant="ghost" onClick={props.onClose} disabled={isRunning()}>
-              Cancelar
+              {t("containers.runModal.cancel")}
             </Button>
 
             {/* Run vira Default */}
@@ -90,7 +94,7 @@ export const RunContainerModal: Component<Props> = (props) => {
               <Show when={isRunning()} fallback={<Play class="w-4 h-4 fill-current" />}>
                 <Loader2 class="w-4 h-4 animate-spin" />
               </Show>
-              Run
+              {t("containers.runModal.run")}
             </Button>
           </div>
         </div>
@@ -130,7 +134,7 @@ export const RunContainerModal: Component<Props> = (props) => {
                   for="network-select"
                   class="block text-xs font-bold text-neutral-500 uppercase tracking-wider mb-2"
                 >
-                  Rede
+                  {t("containers.runModal.sections.network")}
                 </label>
                 {/* Usamos nosso componente Select customizado */}
                 <Select
@@ -140,7 +144,7 @@ export const RunContainerModal: Component<Props> = (props) => {
                   options={networkOptions()}
                 />
                 <p class="text-[10px] text-neutral-600 mt-1">
-                  Selecione a rede para conectar o container.
+                  {t("containers.runModal.sections.networkSelect")}
                 </p>
               </div>
             </div>

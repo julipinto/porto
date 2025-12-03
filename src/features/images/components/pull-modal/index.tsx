@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/solid-query";
 
 // UI
 import { Modal } from "../../../../ui/modal";
+import { useI18n } from "../../../../i18n";
 
 // Componentes Locais
 import { PullInput } from "./pull-input";
@@ -20,6 +21,7 @@ interface Props {
 
 export const PullImageModal: Component<Props> = (props) => {
   const queryClient = useQueryClient();
+  const { t } = useI18n();
 
   // Estados
   const [imageName, setImageName] = createSignal("");
@@ -39,7 +41,7 @@ export const PullImageModal: Component<Props> = (props) => {
 
   const handleSuccess = () => {
     setIsPulling(false);
-    toast.success("Imagem baixada com sucesso!");
+    toast.success(t("images.pullModal.success"));
     queryClient.invalidateQueries({ queryKey: ["images"] });
     setTimeout(handleClose, 3000);
   };
@@ -49,7 +51,7 @@ export const PullImageModal: Component<Props> = (props) => {
 
     setIsPulling(true);
     setLayers({});
-    setStatusMessage("Iniciando conexão...");
+    setStatusMessage(t("images.pullModal.starting"));
 
     // Listeners do Evento
     const unlistenProgress = await listen<DockerProgress>("pull-progress", (e) => {
@@ -102,18 +104,22 @@ export const PullImageModal: Component<Props> = (props) => {
       setLayers((prev) => {
         const completedLayers: Record<string, LayerState> = {};
         for (const [id, layer] of Object.entries(prev)) {
-          completedLayers[id] = { ...layer, status: "Concluído", percentage: 100 };
+          completedLayers[id] = {
+            ...layer,
+            status: t("images.pullModal.completed"),
+            percentage: 100,
+          };
         }
         return completedLayers;
       });
-      setStatusMessage("Download finalizado!");
+      setStatusMessage(t("images.pullModal.downloadFinished"));
       handleSuccess();
       cleanup();
     });
 
     const unlistenError = await listen<string>("pull-error", (e) => {
       toast.error(e.payload);
-      setStatusMessage(`Erro: ${e.payload}`);
+      setStatusMessage(t("images.pullModal.error", { error: e.payload }));
       cleanup();
       setIsPulling(false);
     });
@@ -140,7 +146,7 @@ export const PullImageModal: Component<Props> = (props) => {
     <Modal
       isOpen={props.isOpen}
       onClose={handleClose}
-      title="Baixar Nova Imagem"
+      title={t("images.pullModal.title")}
       maxWidth="max-w-xl"
       footer={
         <>
@@ -150,7 +156,7 @@ export const PullImageModal: Component<Props> = (props) => {
             disabled={isPulling()}
             class="px-4 py-2 text-sm text-neutral-400 hover:text-white disabled:opacity-50 transition-colors"
           >
-            Cancelar
+            {t("images.pullModal.cancel")}
           </button>
 
           <button
@@ -162,7 +168,7 @@ export const PullImageModal: Component<Props> = (props) => {
             <Show when={isPulling()} fallback={<Download class="w-4 h-4" />}>
               <Loader2 class="w-4 h-4 animate-spin" />
             </Show>
-            {isPulling() ? "Baixando..." : "Pull"}
+            {isPulling() ? t("images.pullModal.pulling") : t("images.pullModal.pull")}
           </button>
         </>
       }

@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/solid-query";
 import { dockerInvoke } from "../../../lib/docker-state";
 import toast from "solid-toast";
 import { formatBytes } from "../../../utils/format";
+import { useI18n } from "../../../i18n";
 
 export interface PruneReport {
   deleted_containers: number;
@@ -13,6 +14,7 @@ export interface PruneReport {
 
 export function useSystemActions() {
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const [isPruning, setIsPruning] = createSignal(false);
 
   const pruneSystem = async () => {
@@ -20,7 +22,7 @@ export function useSystemActions() {
     try {
       const report = await dockerInvoke<PruneReport>("prune_system");
 
-      const msg = `Limpeza concluída! Liberados ${formatBytes(report.reclaimed_space)}.`;
+      const msg = t("system.actions.pruneSuccess", { space: formatBytes(report.reclaimed_space) });
       toast.success(msg);
 
       // Atualiza todas as listas para sumir com os itens deletados

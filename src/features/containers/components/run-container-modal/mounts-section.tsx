@@ -4,6 +4,7 @@ import { DynamicList } from "../../../../ui/dynamic-list/dynamic-list";
 import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
 import { MappingRow } from "./mapping-row";
+import { useI18n } from "../../../../i18n";
 
 interface Props {
   mounts: RunConfig["mounts"];
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export const MountsSection: Component<Props> = (props) => {
+  const { t } = useI18n();
   const handleBrowse = async (index: number) => {
     try {
       const selected = await openDialog({ directory: true, multiple: false });
@@ -26,11 +28,11 @@ export const MountsSection: Component<Props> = (props) => {
 
   return (
     <DynamicList
-      label="Volumes (Bind Mounts)"
+      label={t("containers.runModal.sections.volumes")}
       items={props.mounts}
       onAdd={props.onAdd}
       onRemove={props.onRemove}
-      emptyText="Nenhum volume montado."
+      emptyText={t("containers.runModal.sections.noMounts")}
       renderItem={(item, i) => (
         <MappingRow
           type="volume"

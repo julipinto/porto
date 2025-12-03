@@ -10,10 +10,12 @@ import { createDebouncedSignal } from "../../../../utils/debounce";
 import { SearchInput } from "../../../../ui/search-input";
 import { RunContainerModal } from "../run-container-modal";
 import { Button } from "../../../../ui/button";
+import { useI18n } from "../../../../i18n";
 
 export function ContainerList() {
   const [isRunModalOpen, setIsRunModalOpen] = createSignal(false);
   const [inputValue, setInputValue, searchQuery] = createDebouncedSignal("", 300);
+  const { t } = useI18n();
 
   const query = useContainers(searchQuery);
 
@@ -28,9 +30,14 @@ export function ContainerList() {
         {/* Header */}
         <div class="flex justify-between items-end border-b border-neutral-800 pb-4">
           <div>
-            <h2 class="text-2xl font-bold text-white tracking-tight">Containers</h2>
+            <h2 class="text-2xl font-bold text-white tracking-tight">
+              {t("containers.list.title")}
+            </h2>
             <p class="text-neutral-500 text-sm mt-1">
-              {data().sortedGroupNames.length} Stacks • {data().standalone.length} Standalone
+              {t("containers.list.subtitle", {
+                stacks: data().sortedGroupNames.length,
+                standalone: data().standalone.length,
+              })}
             </p>
           </div>
 
@@ -38,7 +45,7 @@ export function ContainerList() {
             <SearchInput
               value={inputValue()}
               onInput={setInputValue}
-              placeholder="Buscar containers..."
+              placeholder={t("containers.list.searchPlaceholder")}
             />
 
             <Button
@@ -47,7 +54,7 @@ export function ContainerList() {
               class="gap-2"
             >
               <Play class="w-3.5 h-3.5 fill-current" />
-              <span class="hidden sm:inline">Run</span>
+              <span class="hidden sm:inline">{t("containers.list.run")}</span>
             </Button>
 
             {/* Botão STOP (Destructive - Agora tem fundo vermelho suave) */}
@@ -59,7 +66,9 @@ export function ContainerList() {
               class="gap-2"
             >
               <Power class="w-3.5 h-3.5" />
-              {pendingAction() === "stop" ? "Stopping..." : "Stop Engine"}
+              {pendingAction() === "stop"
+                ? t("containers.list.stopping")
+                : t("containers.list.stopEngine")}
             </Button>
 
             <div class="flex items-center gap-2 text-xs font-mono bg-neutral-900 px-3 py-1.5 rounded border border-neutral-800 text-neutral-400">
@@ -67,7 +76,7 @@ export function ContainerList() {
                 <RefreshCw class="w-3 h-3 animate-spin text-blue-500" />
               </Show>
               <span class={query.isFetching ? "text-blue-400" : "text-emerald-400"}>
-                {query.isFetching ? "SYNCING" : "ONLINE"}
+                {query.isFetching ? t("global.common.syncing") : t("global.common.online")}
               </span>
             </div>
           </div>
@@ -78,11 +87,11 @@ export function ContainerList() {
           <table class="w-full text-left border-collapse">
             <thead>
               <tr class="bg-neutral-900 border-b border-neutral-800 text-xs uppercase tracking-wider text-neutral-500 font-semibold">
-                <th class="p-4 w-[40%]">Nome / ID</th>
-                <th class="p-4 w-[25%]">Imagem</th>
-                <th class="p-4 w-[20%]">Portas</th>
-                <th class="p-4">Status</th>
-                <th class="p-4 text-right">Ações</th>
+                <th class="p-4 w-[40%]">{t("containers.list.tableHeaders.nameId")}</th>
+                <th class="p-4 w-[25%]">{t("containers.list.tableHeaders.image")}</th>
+                <th class="p-4 w-[20%]">{t("containers.list.tableHeaders.ports")}</th>
+                <th class="p-4">{t("containers.list.tableHeaders.status")}</th>
+                <th class="p-4 text-right">{t("containers.list.tableHeaders.actions")}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-neutral-800/50 text-sm">
@@ -104,8 +113,8 @@ export function ContainerList() {
                       </Show>
                       <span class="italic">
                         {query.isFetching
-                          ? "Carregando containers..."
-                          : "Nenhum container rodando no momento."}
+                          ? t("containers.list.empty.loading")
+                          : t("containers.list.empty.noContainers")}
                       </span>
                     </div>
                   </td>

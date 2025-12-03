@@ -5,12 +5,13 @@ const [showSystemMonitor, setShowSystemMonitor] = createPersistentSignal<boolean
   true,
 );
 
-export type Language = "en" | "pt" | "es";
+export type Language = "en" | "pt" | "es" | "fr";
 
 export const LANGUAGES: Record<Language, string> = {
   pt: "Português (Brasil)",
   en: "English",
   es: "Español",
+  fr: "Français",
 };
 
 // Configuração de Idioma (Padrão: pt)

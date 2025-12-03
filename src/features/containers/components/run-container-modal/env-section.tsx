@@ -2,6 +2,7 @@ import type { Component } from "solid-js";
 import { DynamicList } from "../../../../ui/dynamic-list/dynamic-list";
 import type { SetStoreFunction } from "solid-js/store";
 import type { RunConfig } from "../../hooks/use-run-container";
+import { useI18n } from "../../../../i18n";
 
 interface Props {
   env: RunConfig["env"];
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const EnvSection: Component<Props> = (props) => {
+  const { t } = useI18n();
   interface EnvVar {
     key: string;
     value: string;
@@ -18,15 +20,15 @@ export const EnvSection: Component<Props> = (props) => {
 
   return (
     <DynamicList<EnvVar>
-      label="Variáveis de Ambiente"
+      label={t("containers.runModal.sections.env")}
       items={props.env as EnvVar[]}
       onAdd={props.onAdd}
       onRemove={props.onRemove}
-      emptyText="Nenhuma variável definida."
+      emptyText={t("containers.runModal.sections.noEnvVars")}
       renderItem={(item: EnvVar, i: number) => (
         <>
           <input
-            placeholder="KEY"
+            placeholder={t("containers.runModal.sections.envKey")}
             class="bg-black/20 border border-neutral-700 rounded px-2 py-1 text-sm text-white w-full font-mono text-xs"
             value={item.key}
             onInput={(e: Event & { currentTarget: HTMLInputElement }) =>
@@ -34,7 +36,7 @@ export const EnvSection: Component<Props> = (props) => {
             }
           />
           <input
-            placeholder="VALUE"
+            placeholder={t("containers.runModal.sections.envValue")}
             class="bg-black/20 border border-neutral-700 rounded px-2 py-1 text-sm text-white w-full"
             value={item.value}
             onInput={(e: Event & { currentTarget: HTMLInputElement }) =>

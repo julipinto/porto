@@ -3,6 +3,7 @@ import { createSignal, Show } from "solid-js";
 import type { ContainerSummary } from "../../../types";
 import { useContainerActions } from "../../../hooks/use-container-actions";
 import { Button } from "../../../../../ui/button";
+import { useI18n } from "../../../../../i18n";
 
 interface Props {
   container: ContainerSummary;
@@ -11,6 +12,7 @@ interface Props {
 
 export function ActionsCell(props: Props) {
   const { startContainer, stopContainer, removeContainer } = useContainerActions();
+  const { t } = useI18n();
   const [localAction, setLocalAction] = createSignal<string | null>(null);
 
   const isRunning = props.container.State === "running";
@@ -46,7 +48,7 @@ export function ActionsCell(props: Props) {
 
     if (isLoading()) return;
 
-    const confirmed = confirm(`Tem certeza que deseja remover o container "${containerName}"?`);
+    const confirmed = confirm(t("containers.actions.confirmDelete", { name: containerName }));
     if (!confirmed) return;
 
     setLocalAction("delete");
@@ -66,7 +68,7 @@ export function ActionsCell(props: Props) {
         size="icon"
         onClick={handleToggle}
         disabled={isLoading()}
-        title={isRunning ? "Parar" : "Iniciar"}
+        title={isRunning ? t("containers.actions.stop") : t("containers.actions.start")}
         class={
           isRunning
             ? "text-neutral-400 hover:text-amber-400 hover:bg-amber-500/10"
@@ -86,7 +88,7 @@ export function ActionsCell(props: Props) {
         size="icon"
         onClick={handleDelete}
         disabled={isLoading()}
-        title="Remover"
+        title={t("containers.actions.remove")}
         class="text-neutral-500 hover:text-red-400 hover:bg-red-500/10"
       >
         <Show

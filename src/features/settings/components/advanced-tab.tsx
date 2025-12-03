@@ -4,12 +4,14 @@ import { useDockerContextActions } from "../hooks/use-docker-context-actions";
 import { useDockerContexts } from "../hooks/use-docker-context";
 import { Button } from "../../../ui/button";
 import { PruneModal } from "./prune-modal";
+import { useI18n } from "../../../i18n";
 
 export const AdvancedTab: Component = () => {
   const { contexts } = useDockerContexts();
   const [showPrune, setShowPrune] = createSignal(false);
   const { activeConnection, browseSocketFile, applyContext, customPath, setCustomPath } =
     useDockerContextActions();
+  const { t } = useI18n();
 
   const handleConnectClick = () => {
     applyContext(customPath());
@@ -21,7 +23,7 @@ export const AdvancedTab: Component = () => {
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
           <Server class="w-4 h-4 text-blue-500" />
-          Contextos Detectados
+          {t("settings.advanced.detectedContexts.title")}
         </h3>
 
         <div class="space-y-2">
@@ -68,7 +70,7 @@ export const AdvancedTab: Component = () => {
                     <Show when={isAppConnected()}>
                       <div class="flex items-center gap-1 text-[10px] font-bold bg-blue-500 text-white px-2 py-0.5 rounded shadow-sm">
                         <Check class="w-3 h-3" />
-                        CONECTADO
+                        {t("settings.advanced.detectedContexts.connected")}
                       </div>
                     </Show>
 
@@ -76,10 +78,10 @@ export const AdvancedTab: Component = () => {
                     <Show when={ctx.Current && !isAppConnected()}>
                       <div
                         class="flex items-center gap-1 text-[10px] bg-neutral-800 text-neutral-400 px-2 py-0.5 rounded border border-neutral-700"
-                        title="Este é o contexto padrão do seu terminal"
+                        title={t("settings.advanced.detectedContexts.cliDefaultTooltip")}
                       >
                         <Terminal class="w-3 h-3" />
-                        CLI Default
+                        {t("settings.advanced.detectedContexts.cliDefault")}
                       </div>
                     </Show>
                   </div>
@@ -94,11 +96,10 @@ export const AdvancedTab: Component = () => {
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
           <Unplug class="w-4 h-4 text-amber-500" />
-          Conexão Manual
+          {t("settings.advanced.manualConnection.title")}
         </h3>
         <p class="text-neutral-500 text-sm mb-4">
-          Selecione o arquivo de socket (Unix) ou digite o endereço TCP para conectar a um host
-          remoto.
+          {t("settings.advanced.manualConnection.description")}
         </p>
 
         <div class="flex gap-2">
@@ -109,7 +110,7 @@ export const AdvancedTab: Component = () => {
               value={customPath()}
               onInput={(e) => setCustomPath(e.currentTarget.value)}
               class="w-full bg-black/40 border border-neutral-700 text-white text-sm rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none font-mono"
-              placeholder="unix:///var/run/docker.sock"
+              placeholder={t("settings.advanced.manualConnection.placeholder")}
             />
           </div>
 
@@ -119,7 +120,7 @@ export const AdvancedTab: Component = () => {
             size="icon"
             onClick={browseSocketFile}
             class="bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700 hover:text-white"
-            title="Procurar arquivo .sock"
+            title={t("settings.advanced.manualConnection.browseSocket")}
           >
             <FolderOpen class="w-5 h-5" />
           </Button>
@@ -130,7 +131,7 @@ export const AdvancedTab: Component = () => {
             onClick={handleConnectClick}
             class="shadow-lg shadow-blue-900/20"
           >
-            Conectar
+            {t("settings.advanced.manualConnection.connect")}
           </Button>
         </div>
       </section>
@@ -139,15 +140,16 @@ export const AdvancedTab: Component = () => {
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
           <Database class="w-4 h-4 text-amber-500" />
-          Manutenção do Sistema
+          {t("settings.advanced.maintenance.title")}
         </h3>
 
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm text-neutral-200 font-medium">Limpeza de Lixo (Prune)</p>
+            <p class="text-sm text-neutral-200 font-medium">
+              {t("settings.advanced.maintenance.prune")}
+            </p>
             <p class="text-xs text-neutral-500 mt-1 max-w-md">
-              Remove containers parados, redes não usadas e imagens sem tag para liberar espaço em
-              disco.
+              {t("settings.advanced.maintenance.pruneDescription")}
             </p>
           </div>
 
@@ -157,7 +159,7 @@ export const AdvancedTab: Component = () => {
             class="border-red-900/30 hover:bg-red-900/10 text-red-400 hover:text-red-300 hover:border-red-900/50"
           >
             <Trash2 class="w-4 h-4 mr-2" />
-            Limpar Sistema
+            {t("settings.advanced.maintenance.cleanSystem")}
           </Button>
         </div>
       </section>

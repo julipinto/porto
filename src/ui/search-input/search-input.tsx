@@ -1,5 +1,6 @@
 import { type Component, Show } from "solid-js";
 import { Search, X } from "lucide-solid";
+import { useI18n } from "../../i18n";
 
 interface Props {
   value: string;
@@ -9,6 +10,7 @@ interface Props {
 }
 
 export const SearchInput: Component<Props> = (props) => {
+  const { t } = useI18n();
   return (
     <div class={`relative group w-full max-w-xs ${props.class || ""}`}>
       <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -19,7 +21,7 @@ export const SearchInput: Component<Props> = (props) => {
         type="text"
         value={props.value}
         onInput={(e) => props.onInput(e.currentTarget.value)}
-        placeholder={props.placeholder || "Buscar..."}
+        placeholder={props.placeholder || t("global.common.search")}
         class="w-full bg-neutral-900/50 border border-neutral-800 text-neutral-200 text-sm rounded-lg pl-9 pr-8 py-1.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 outline-none transition-all placeholder:text-neutral-600"
       />
 
@@ -28,7 +30,7 @@ export const SearchInput: Component<Props> = (props) => {
           type="button"
           onClick={() => props.onInput("")}
           class="absolute inset-y-0 right-0 flex items-center pr-2 text-neutral-500 hover:text-neutral-300 cursor-pointer"
-          title="Limpar busca"
+          title={t("global.common.clearSearch")}
         >
           <X class="w-3 h-3" />
         </button>

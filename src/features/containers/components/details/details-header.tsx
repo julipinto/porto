@@ -3,6 +3,7 @@ import { ArrowLeft, Hash, Loader2, Play, Square } from "lucide-solid";
 import { useContainerInspect } from "../../hooks/use-container-inspect";
 import { Button } from "../../../../ui/button";
 import { useContainerActions } from "../../hooks/use-container-actions";
+import { useI18n } from "../../../../i18n";
 
 interface Props {
   containerId: string;
@@ -11,11 +12,12 @@ interface Props {
 
 export const DetailsHeader: Component<Props> = (props) => {
   const { startContainer, stopContainer } = useContainerActions();
+  const { t } = useI18n();
 
   const query = useContainerInspect(props.containerId);
   const [actionState, setActionState] = createSignal<"start" | "stop" | "delete" | null>(null);
 
-  const name = () => query.data?.Name?.replace("/", "") || "Carregando...";
+  const name = () => query.data?.Name?.replace("/", "") || t("containers.details.loading");
   const status = () => query.data?.State?.Status || "unknown";
   const isRunning = () => query.data?.State?.Running === true;
 
@@ -41,7 +43,12 @@ export const DetailsHeader: Component<Props> = (props) => {
     <div class="flex items-center justify-between border-b border-neutral-800 pb-5 mb-6">
       <div class="flex items-center gap-4">
         {/* Botão Voltar */}
-        <Button variant="ghost" size="icon" onClick={props.onBack} title="Voltar para a lista">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={props.onBack}
+          title={t("containers.details.back")}
+        >
           <ArrowLeft class="w-5 h-5" />
         </Button>
 
@@ -51,7 +58,7 @@ export const DetailsHeader: Component<Props> = (props) => {
           <div class="flex items-center gap-3">
             <h2 class="text-xl font-bold text-white tracking-tight">{name()}</h2>
             <span class="text-[10px] font-bold text-neutral-500 bg-neutral-900 px-2 py-0.5 rounded border border-neutral-800 uppercase tracking-wider">
-              Container
+              {t("containers.details.container")}
             </span>
           </div>
 
@@ -111,7 +118,7 @@ export const DetailsHeader: Component<Props> = (props) => {
               <Square class="w-4 h-4 fill-current" />
             </Show>
           </Show>
-          {isRunning() ? "Parar" : "Iniciar"}
+          {isRunning() ? t("containers.details.stop") : t("containers.details.start")}
         </Button>
       </div>
     </div>
