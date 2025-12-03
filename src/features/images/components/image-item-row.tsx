@@ -4,6 +4,7 @@ import type { ImageSummary } from "../types";
 import { useImageActions } from "../hooks/use-image-actions";
 import { formatBytes, formatTimeAgo } from "../../../utils/format";
 import { Button } from "../../../ui/button";
+import { useUIStore } from "../../../stores/ui-store";
 
 interface Props {
   image: ImageSummary;
@@ -13,6 +14,7 @@ interface Props {
 export const ImageItemRow: Component<Props> = (props) => {
   const { removeImage } = useImageActions();
   const [isDeleting, setIsDeleting] = createSignal(false);
+  const { setSelectedImageId } = useUIStore();
 
   // Formata o ID curto (ex: sha256:12345... -> 1234567890ab)
   const shortId = () => props.image.Id.replace("sha256:", "").substring(0, 12);
@@ -24,6 +26,9 @@ export const ImageItemRow: Component<Props> = (props) => {
     }
     return "<none>";
   };
+
+  const name = () => mainTag().split(":")[0];
+  const isDangling = () => name() === "<none>";
 
   const handleDelete = async (e: MouseEvent) => {
     e.stopPropagation();
@@ -55,9 +60,14 @@ export const ImageItemRow: Component<Props> = (props) => {
             <Package class="w-5 h-5" />
           </div>
           <div class="flex flex-col min-w-0">
-            <div class="font-medium text-neutral-200 truncate max-w-xs" title={mainTag()}>
-              {mainTag()}
-            </div>
+            <Button
+              variant="link"
+              onClick={() => setSelectedImageId(props.image.Id)}
+              class={`h-auto p-0 justify-start font-medium ${isDangling() ? "text-neutral-500 italic" : "text-neutral-200 hover:text-blue-400"} truncate max-w-xs`}
+              title={mainTag()}
+            >
+              {name()}
+            </Button>
             {/* Mostra outras tags se houver */}
             <Show when={props.image.RepoTags && props.image.RepoTags.length > 1}>
               <div class="flex flex-wrap gap-1 mt-1">

@@ -16,9 +16,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 import { useWindowPersistence } from "./hooks/use-window-persistence";
 import { NetworkList } from "./features/networks/components/network-list";
 import { VolumeDetailsPage } from "./features/volumes/components/details";
+import { ImageDetailsPage } from "./features/images/components/details";
 
 function App() {
-  const { activeView, selectedContainerId, selectedVolumeName } = useUIStore();
+  const { activeView, selectedContainerId, selectedVolumeName, selectedImageId } = useUIStore();
   const { showSystemMonitor } = useSettingsStore();
 
   useWindowPersistence();
@@ -80,9 +81,18 @@ function App() {
                     </Match>
 
                     <Match when={activeView() === "images"}>
-                      <PageWrapper>
-                        <ImageList />
-                      </PageWrapper>
+                      <Show
+                        when={selectedImageId()}
+                        fallback={
+                          <PageWrapper>
+                            <ImageList />
+                          </PageWrapper>
+                        }
+                      >
+                        <div class="h-full w-full p-6">
+                          <ImageDetailsPage />
+                        </div>
+                      </Show>
                     </Match>
 
                     <Match when={activeView() === "volumes"}>

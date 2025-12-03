@@ -36,6 +36,7 @@ pub fn run() {
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![
+      // Container Commands
       commands::containers::list_containers,
       commands::containers::start_container,
       commands::containers::stop_container,
@@ -43,24 +44,34 @@ pub fn run() {
       commands::containers::inspect_container,
       commands::containers::manage_container_group,
       commands::containers::create_and_start_container,
+      // System Commands
       commands::system::manage_docker,
       commands::system::is_docker_service_active,
       commands::system::ping_docker,
       commands::system::prune_system,
+      // Image Commands
       commands::images::list_images,
       commands::images::remove_image,
       commands::images::pull_image,
+      commands::images::inspect_image,
+      commands::images::history_image,
+      // Volume Commands
       commands::volumes::list_volumes,
       commands::volumes::remove_volume,
       commands::volumes::inspect_volume,
+      // Log & Stats Commands
       commands::container_logs::stream_container_logs,
       commands::container_stats::stream_container_stats,
+      // Monitoring Commands
       commands::monitor::get_host_stats,
+      // Terminal Commands
       commands::terminal::open_terminal,
       commands::terminal::write_terminal,
       commands::terminal::resize_terminal,
+      // Docker Context Commands
       commands::contexts::list_docker_contexts,
       commands::contexts::set_docker_context,
+      // Network Commands
       commands::networks::list_networks,
       commands::networks::remove_network,
     ])

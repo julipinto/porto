@@ -1,13 +1,24 @@
 use crate::services::docker::{self, DockerConfig};
+
+use bollard::models::{
+  HistoryResponseItem,     // Para history_image
+  ImageDeleteResponseItem, // Para remove_image
+  ImageInspect,            // Para inspect_image
+  ImageSummary,            // Para list_images
+};
+
+// 2. Todas as Opções necessárias
 use bollard::query_parameters::{CreateImageOptions, ListImagesOptions, RemoveImageOptions};
+
 use futures_util::stream::StreamExt;
 use tauri::{AppHandle, Emitter, State};
 
+// --- 1. LISTAR ---
 #[tauri::command]
 pub async fn list_images(
   state: State<'_, DockerConfig>,
   search: Option<String>,
-) -> Result<Vec<bollard::models::ImageSummary>, String> {
+) -> Result<Vec<ImageSummary>, String> {
   let docker = docker::connect(&state)?;
 
   let options = Some(ListImagesOptions {
@@ -20,22 +31,15 @@ pub async fn list_images(
     .await
     .map_err(|e| format!("Erro ao listar imagens: {}", e))?;
 
-  // Lógica de Filtragem
   if let Some(query) = search {
     let q = query.trim().to_lowercase();
     if !q.is_empty() {
       images.retain(|img| {
-        // 1. Verifica ID (parcial)
         let match_id = img.id.to_lowercase().contains(&q);
-
-        // 2. Verifica Tags (Nome da imagem)
-        // A imagem pode ter várias tags (ex: ubuntu:latest, ubuntu:22.04)
-        // Se QUALQUER uma der match, mantemos a imagem.
         let match_tag = img
           .repo_tags
           .iter()
           .any(|tag| tag.to_lowercase().contains(&q));
-
         match_id || match_tag
       });
     }
@@ -44,23 +48,27 @@ pub async fn list_images(
   Ok(images)
 }
 
+// --- 2. REMOVER ---
 #[tauri::command]
 pub async fn remove_image(
   state: State<'_, DockerConfig>,
   id: String,
-) -> Result<Vec<bollard::models::ImageDeleteResponseItem>, String> {
+) -> Result<Vec<ImageDeleteResponseItem>, String> {
   let docker = docker::connect(&state)?;
   let options = Some(RemoveImageOptions {
     force: true,
     ..Default::default()
   });
+
   let result = docker
     .remove_image(&id, options, None)
     .await
     .map_err(|e| format!("Erro ao excluir imagem: {}", e))?;
+
   Ok(result)
 }
 
+// --- 3. BAIXAR (PULL) ---
 #[tauri::command]
 pub async fn pull_image(
   app: AppHandle,
@@ -100,4 +108,37 @@ pub async fn pull_image(
   });
 
   Ok(())
+}
+
+// --- 4. INSPECIONAR ---
+#[tauri::command]
+pub async fn inspect_image(
+  state: State<'_, DockerConfig>,
+  id: String,
+) -> Result<ImageInspect, String> {
+  let docker = docker::connect(&state)?;
+
+  let result = docker
+    .inspect_image(&id)
+    .await
+    .map_err(|e| format!("Erro ao inspecionar imagem: {}", e))?;
+
+  Ok(result)
+}
+
+// --- 5. HISTÓRICO ---
+#[tauri::command]
+pub async fn history_image(
+  state: State<'_, DockerConfig>,
+  id: String,
+) -> Result<Vec<HistoryResponseItem>, String> {
+  let docker = docker::connect(&state)?;
+
+  // CORREÇÃO: O método correto no Bollard é image_history
+  let history = docker
+    .image_history(&id)
+    .await
+    .map_err(|e| format!("Erro ao buscar histórico: {}", e))?;
+
+  Ok(history)
 }

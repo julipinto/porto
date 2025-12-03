@@ -78,9 +78,14 @@ export function ImageList() {
                   <ImageItemRow
                     image={img}
                     onRun={() => {
-                      const tag =
-                        img.RepoTags?.[0] || img.Id.replace("sha256:", "").substring(0, 12);
-                      setImageToRun(tag);
+                      const firstTag = img.RepoTags?.[0];
+                      const isDangling = !firstTag || firstTag === "<none>:<none>";
+
+                      const imageReference = isDangling
+                        ? img.Id.replace("sha256:", "").substring(0, 12)
+                        : firstTag;
+
+                      setImageToRun(imageReference);
                     }}
                   />
                 )}
