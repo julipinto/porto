@@ -10,7 +10,7 @@ export default {
   footer: {
     appCpu: "CPU de l'App",
     appRam: "RAM de l'App",
-    version: "Docker Manager v0.1.0",
+    version: "Porto v0.1.0",
   },
   common: {
     search: "Rechercher...",
