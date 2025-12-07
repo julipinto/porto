@@ -100,13 +100,14 @@ export function ActionsCell(props: Props) {
       </Button>
 
       {/* Botão Menu */}
-      <Button
+      {/* Soon: bring quick actions here */}
+      {/* <Button
         variant="ghost"
         size="icon"
         class="text-neutral-600 hover:text-white hover:bg-neutral-800"
       >
         <EllipsisVertical class="w-4 h-4" />
-      </Button>
+      </Button> */}
     </div>
   );
 }

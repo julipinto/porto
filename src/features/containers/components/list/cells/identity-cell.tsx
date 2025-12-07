@@ -16,8 +16,8 @@ export function IdentityCell(props: Props) {
   const name = props.container.Names[0]?.replace("/", "") || t("containers.list.noName");
 
   return (
-    <div class={`flex items-start gap-3 ${props.isNested ? "pl-10" : ""}`}>
-      <div class={`flex items-start gap-3 ${props.isNested ? "pl-10" : ""}`}>
+    <div class={`flex items-start gap-3 ${props.isNested ? "pl-5" : ""}`}>
+      <div class={`flex items-start gap-3 ${props.isNested ? "pl-5" : ""}`}>
         <div class={`mt-1 shrink-0 ${props.isNested ? "text-neutral-600" : "text-neutral-400"}`}>
           {props.isNested ? (
             <div class="w-1.5 h-1.5 rounded-full bg-neutral-700 mt-1.5" />
