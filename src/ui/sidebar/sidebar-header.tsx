@@ -24,7 +24,7 @@ export const SidebarHeader: Component<Props> = (props) => {
           }`}
         >
           <h1 class="font-bold text-lg tracking-tight text-neutral-100 leading-none">
-            Docker<span class="font-normal text-neutral-500">Mng</span>
+            Porto<span class="font-normal text-neutral-500">Mng</span>
           </h1>
         </div>
       </div>
