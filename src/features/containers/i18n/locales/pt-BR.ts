@@ -56,6 +56,7 @@ export default {
   stats: {
     stoppedTitle: "Container Parado",
     stoppedDescription: "Inicie o container para ver estatísticas em tempo real.",
+    collectingMetrics: "Coletando métricas iniciais...",
   },
   runModal: {
     title: "Rodar Novo Container",

@@ -56,6 +56,7 @@ export default {
   stats: {
     stoppedTitle: "Contenedor Detenido",
     stoppedDescription: "Inicia el contenedor para ver estadísticas en tiempo real.",
+    collectingMetrics: "Recopilando métricas iniciales...",
   },
   runModal: {
     title: "Ejecutar Nuevo Contenedor",

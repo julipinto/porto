@@ -81,7 +81,8 @@ export const StatsView: Component<Props> = (props) => {
         fallback={
           <div class="absolute inset-0 flex flex-col items-center justify-center text-neutral-500 gap-3">
             <Loader2 class="w-8 h-8 animate-spin text-blue-500" />
-            <span>Coletando métricas iniciais...</span>
+            {/* <span>Coletando métricas iniciais...</span> */}
+            <div>{t("containers.stats.collectingMetrics")}</div>
           </div>
         }
       >

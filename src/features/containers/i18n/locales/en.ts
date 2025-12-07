@@ -56,6 +56,7 @@ export default {
   stats: {
     stoppedTitle: "Container Stopped",
     stoppedDescription: "Start the container to see real-time statistics.",
+    collectingMetrics: "Collecting initial metrics...",
   },
   runModal: {
     title: "Run New Container",
