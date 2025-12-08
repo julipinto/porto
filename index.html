@@ -1,19 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Porto</title>
 
     <style>
-      body {
-        background-color: #0a0a0a; /* Fundo escuro imediato */
-        margin: 0;
-        overflow: hidden; /* Evita scrollbars durante o load */
+      :root {
+        --bg-color: #09090b;
+        --brand-blue: #2563eb;
+        --brand-light: #60a5fa;
       }
 
-      /* Centraliza tudo */
+      body {
+        background-color: var(--bg-color);
+        margin: 0;
+        overflow: hidden;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+
       .app-loader {
         height: 100vh;
         width: 100vw;
@@ -21,44 +28,226 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #525252;
-        font-family: ui-sans-serif, system-ui, sans-serif;
+        position: relative;
       }
 
-      /* O Cubo Girando (Estilo Docker) */
-      .cube-spinner {
+      /* Container do Logo */
+      .logo-container {
+        width: 140px; /* Tamanho visual aumentado */
+        height: 140px;
+        position: relative;
+        /* Glow azul suave atrás do logo */
+        filter: drop-shadow(0 0 30px rgba(37, 99, 235, 0.2));
+      }
+
+      .porto-logo {
+        width: 100%;
+        height: 100%;
+        overflow: visible; /* Permite que o brilho vaze */
+      }
+
+      /* --- ANIMAÇÕES DAS PARTES --- */
+
+      /* 1. Bloco Superior Esquerdo */
+      .part-tl {
+        opacity: 0;
+        animation: slide-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        transform-origin: center;
+      }
+
+      /* 2. Bloco Inferior Esquerdo */
+      .part-bl {
+        opacity: 0;
+        animation: slide-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.15s;
+        transform-origin: center;
+      }
+
+      /* 3. O Conector (Linha + Retângulo mascarado) */
+      .part-connector {
+        opacity: 0;
+        animation: fade-in 0.5s ease-out forwards 0.3s;
+      }
+
+      /* 4. O Container Principal (Direita) */
+      .part-main {
+        opacity: 0;
+        animation: pop-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.4s;
+        transform-origin: center;
+      }
+
+      /* Animação de respiração contínua após carregar */
+      .logo-container svg {
+        animation: breathe 4s ease-in-out infinite 1.2s;
+      }
+
+      /* Keyframes */
+      @keyframes slide-in {
+        from {
+          opacity: 0;
+          transform: translateX(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes pop-in {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+        }
+        50% {
+          transform: scale(1.02);
+          filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.3));
+        }
+      }
+
+      /* Texto de Carregamento */
+      .loading-container {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        opacity: 0;
+        animation: fade-in 1s ease-out forwards 0.5s;
+      }
+
+      .app-name {
+        color: white;
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(to right, #ffffff, #93c5fd);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .loading-bar {
         width: 40px;
-        height: 40px;
-        background-color: #3b82f6; /* Azul do seu tema */
-        animation: spin 1.2s infinite ease-in-out;
-      }
-
-      @keyframes spin {
-        0% { transform: perspective(120px) rotateX(0deg) rotateY(0deg); }
-        50% { transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg); }
-        100% { transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg); }
+        height: 2px;
+        background: #27272a;
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 8px;
       }
 
       .loading-text {
-        margin-top: 20px;
+        color: #9ca3af;
         font-size: 0.875rem;
-        letter-spacing: 0.05em;
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        font-weight: 500;
+        text-align: center;
       }
 
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: .5; }
+      .loading-bar-inner {
+        width: 100%;
+        height: 100%;
+        background: #3b82f6;
+        transform: translateX(-100%);
+        animation: loading-scan 1.5s infinite ease-in-out;
+      }
+
+      @keyframes loading-scan {
+        0% {
+          transform: translateX(-100%);
+        }
+        50% {
+          transform: translateX(0%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
       }
     </style>
   </head>
 
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+
     <div id="root">
       <div class="app-loader">
-        <div class="cube-spinner"></div>
-        <div class="loading-text">INITIALIZING DOCKER SOCKET...</div>
+        <div class="logo-container">
+          <svg
+            class="porto-logo"
+            viewBox="0 0 42 42"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g class="part-connector">
+              <mask
+                id="mask0_2_14"
+                style="mask-type: alpha"
+                maskUnits="userSpaceOnUse"
+                x="29"
+                y="6"
+                width="7"
+                height="7"
+              >
+                <circle cx="32.5" cy="9.5" r="3" fill="#60A5FA" />
+              </mask>
+              <g mask="url(#mask0_2_14)">
+                <rect x="28.5" y="6.5" width="8" height="3" fill="#60A5FA" />
+              </g>
+              <path
+                d="M32.5 2.5V9.5"
+                stroke="#60A5FA"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </g>
+
+            <path
+              class="part-tl"
+              d="M16.5 1.5H4.5C2.84315 1.5 1.5 2.84315 1.5 4.5V16.5C1.5 18.1569 2.84315 19.5 4.5 19.5H16.5C18.1569 19.5 19.5 18.1569 19.5 16.5V4.5C19.5 2.84315 18.1569 1.5 16.5 1.5Z"
+              stroke="#60A5FA"
+              stroke-width="3"
+            />
+
+            <path
+              class="part-bl"
+              d="M4.5 25H16.5C17.3284 25 18 25.6716 18 26.5V38.5C18 39.3284 17.3284 40 16.5 40H4.5C3.67157 40 3 39.3284 3 38.5V26.5C3 25.6716 3.67157 25 4.5 25Z"
+              stroke="#60A5FA"
+              stroke-width="3"
+            />
+
+            <path
+              class="part-main"
+              d="M26.5 11H38.5C39.3284 11 40 11.6716 40 12.5V24.5C40 25.3284 39.3284 26 38.5 26H26.5C25.6716 26 25 25.3284 25 24.5V12.5C25 11.6716 25.6716 11 26.5 11Z"
+              stroke="#2563EB"
+              stroke-width="3"
+            />
+          </svg>
+        </div>
+
+        <div class="loading-container">
+          <div class="app-name">Porto</div>
+          <div class="loading-bar">
+            <div class="loading-bar-inner"></div>
+          </div>
+          <div class="loading-text">Initializing socket..</div>
+        </div>
       </div>
     </div>
 

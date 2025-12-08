@@ -1,4 +1,4 @@
-import { Play, Square, LoaderCircle, Trash2, EllipsisVertical } from "lucide-solid";
+import { Play, Square, LoaderCircle, Trash2 } from "lucide-solid";
 import { createSignal, Show } from "solid-js";
 import type { ContainerSummary } from "../../../types";
 import { useContainerActions } from "../../../hooks/use-container-actions";
