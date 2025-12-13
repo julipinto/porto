@@ -28,4 +28,4 @@ futures-util = "0.3.31"
 sysinfo = "0.37.2"
 tauri-plugin-dialog = "2"
 tauri-plugin-store = "2"
-
+async-trait = "0.1"

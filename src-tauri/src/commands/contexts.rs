@@ -78,19 +78,25 @@ pub fn set_docker_context(
 ) -> Result<ContextConfigResponse, String> {
   let mut final_uri = endpoint.trim().to_string();
   let connection_type;
-  let variant; // <--- Vamos calcular agora
+  let variant;
 
-  // 1. Lógica de Detecção e Formatação
-  if final_uri.starts_with("tcp://") || final_uri.starts_with("ssh://") {
+  if final_uri.starts_with("tcp://")
+    || final_uri.starts_with("ssh://")
+    || final_uri.starts_with("http://")
+    || final_uri.starts_with("https://")
+  {
     connection_type = ConnectionType::Remote;
     variant = DockerVariant::Remote;
   } else {
     connection_type = ConnectionType::Local;
 
-    // Adiciona prefixos se necessário (Lógica de OS)
     #[cfg(target_os = "windows")]
-    if !final_uri.starts_with("npipe://") {
-      final_uri = format!("npipe://{}", final_uri);
+    {
+      if !final_uri.contains("://") {
+        final_uri = format!("npipe://{}", final_uri);
+      } else if !final_uri.starts_with("npipe://") {
+        final_uri = format!("npipe://{}", final_uri);
+      }
     }
 
     #[cfg(unix)]
@@ -98,7 +104,7 @@ pub fn set_docker_context(
       final_uri = format!("unix://{}", final_uri);
     }
 
-    // CLASSIFICAÇÃO DA VARIANTE (O Pulo do Gato 🐈)
+    // CLASSIFICAÇÃO DA VARIANTE
     if final_uri.contains("podman") {
       variant = DockerVariant::Podman;
     } else if final_uri.contains("desktop") {
@@ -108,8 +114,6 @@ pub fn set_docker_context(
     }
   }
 
-  // 2. Salva TUDO no Estado Global
-  // Agora o estado sabe exatamente quem é, sem precisar adivinhar depois
   state.set_config(final_uri.clone(), variant);
 
   Ok(ContextConfigResponse {

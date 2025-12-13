@@ -45,10 +45,10 @@ pub fn run() {
       commands::containers::manage_container_group,
       commands::containers::create_and_start_container,
       // System Commands
-      commands::system::manage_docker,
-      commands::system::is_docker_service_active,
-      commands::system::ping_docker,
-      commands::system::prune_system,
+      services::docker::manager::manage_docker,
+      services::docker::manager::is_docker_service_active,
+      services::docker::manager::ping_docker,
+      services::docker::manager::prune_system,
       // Image Commands
       commands::images::list_images,
       commands::images::remove_image,

@@ -5,6 +5,5 @@ pub mod contexts;
 pub mod images;
 pub mod monitor;
 pub mod networks;
-pub mod system;
 pub mod terminal;
 pub mod volumes;
