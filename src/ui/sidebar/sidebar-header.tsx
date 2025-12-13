@@ -1,4 +1,3 @@
-import { LayoutGrid } from "lucide-solid";
 import type { Component } from "solid-js";
 
 interface Props {
@@ -15,7 +14,7 @@ export const SidebarHeader: Component<Props> = (props) => {
       >
         {/* Logo mais limpo (sem fundo azul boxy) */}
         <div class="text-blue-500 shrink-0">
-          <LayoutGrid class="w-7 h-7" />
+          <img src="src/assets/logo2.svg" class="w-7 h-7" alt="Logo" />
         </div>
 
         <div
@@ -24,7 +23,7 @@ export const SidebarHeader: Component<Props> = (props) => {
           }`}
         >
           <h1 class="font-bold text-lg tracking-tight text-neutral-100 leading-none">
-            Docker<span class="font-normal text-neutral-500">Mng</span>
+            Porto<span class="font-normal text-neutral-500">Mng</span>
           </h1>
         </div>
       </div>
