@@ -49,6 +49,8 @@ pub fn run() {
       services::docker::manager::is_docker_service_active,
       services::docker::manager::ping_docker,
       services::docker::manager::prune_system,
+      services::docker::manager::get_active_config,
+      services::docker::manager::connect_and_persist,
       // Image Commands
       commands::images::list_images,
       commands::images::remove_image,

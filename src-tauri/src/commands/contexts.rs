@@ -92,9 +92,7 @@ pub fn set_docker_context(
 
     #[cfg(target_os = "windows")]
     {
-      if !final_uri.contains("://") {
-        final_uri = format!("npipe://{}", final_uri);
-      } else if !final_uri.starts_with("npipe://") {
+      if !final_uri.contains("://") || final_uri.starts_with("npipe://") {
         final_uri = format!("npipe://{}", final_uri);
       }
     }

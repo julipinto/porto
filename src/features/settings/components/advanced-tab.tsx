@@ -5,12 +5,20 @@ import { useDockerContexts } from "../hooks/use-docker-context";
 import { Button } from "../../../ui/button";
 import { PruneModal } from "./prune-modal";
 import { useI18n } from "../../../i18n";
+import ConnectionStatus from "./connection-status";
 
 export const AdvancedTab: Component = () => {
   const { contexts } = useDockerContexts();
   const [showPrune, setShowPrune] = createSignal(false);
-  const { activeConnection, browseSocketFile, applyContext, customPath, setCustomPath } =
-    useDockerContextActions();
+  const {
+    browseSocketFile,
+    applyContext,
+    customPath,
+    setCustomPath,
+    isConnecting,
+    activeConnection, // <--- Add this line here!
+  } = useDockerContextActions();
+
   const { t } = useI18n();
 
   const handleConnectClick = () => {
@@ -19,6 +27,8 @@ export const AdvancedTab: Component = () => {
 
   return (
     <div class="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <ConnectionStatus />
+
       {/* Seção 1: Contextos Detectados (Automático) */}
       <section class="bg-[#161b22] border border-neutral-800 rounded-xl p-6 shadow-sm">
         <h3 class="text-lg font-medium text-white mb-4 flex items-center gap-2">
@@ -127,8 +137,8 @@ export const AdvancedTab: Component = () => {
 
           {/* Botão Conectar */}
           <Button
-            variant="default"
             onClick={handleConnectClick}
+            disabled={isConnecting()}
             class="shadow-lg shadow-blue-900/20"
           >
             {t("settings.advanced.manualConnection.connect")}

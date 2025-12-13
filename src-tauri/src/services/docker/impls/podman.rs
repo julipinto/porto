@@ -1,5 +1,5 @@
-use async_trait::async_trait;
 use crate::services::docker::DockerLifecycle;
+use async_trait::async_trait;
 
 #[cfg(unix)]
 use crate::services::docker::sys;
